@@ -37,3 +37,4 @@ out/
 .vscode/
 
 application-dev-db.yaml
+application-prod-db.yaml
