@@ -1,4 +1,2 @@
-rootProject.name = "semonemo"
-include("web")
-include("infra")
-include("domain")
+rootProject.name = "semonemo-api"
+include ("domain", "infra", "web")
