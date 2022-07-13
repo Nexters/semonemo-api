@@ -1,0 +1,7 @@
+### 유저 정보 추가
+POST {{host}}/users
+Content-Type: application/json
+
+{
+  "nickname": "aiden"
+}
