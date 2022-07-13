@@ -4,8 +4,6 @@ REPOSITORY_DIR=/home/ubuntu/app
 APP_NAME=semonemo-api
 PID_PATH=$REPOSITORY_DIR/PID
 
-sudo su
-
 echo "change directory"
 
 cd $REPOSITORY_DIR/$APP_NAME/web
