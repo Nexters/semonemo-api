@@ -14,7 +14,7 @@ class UserController(
     private val userService: UserService
 ) {
 
-    @PostMapping("/users", consumes = [MediaType.APPLICATION_JSON_VALUE])
-    fun createUser(@RequestBody request: UserSaveRequest): Mono<User> =
-        userService.createUser(request.toUser())
+//    @PostMapping("/users", consumes = [MediaType.APPLICATION_JSON_VALUE])
+//    fun createUser(@RequestBody request: UserSaveRequest): Mono<User> =
+//        userService.createUser(request.toUser())
 }
