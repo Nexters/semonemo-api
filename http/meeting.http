@@ -1,0 +1,3 @@
+### 모임 리스트 조회
+GET {{host}}/meetings
+Content-Type: application/json
