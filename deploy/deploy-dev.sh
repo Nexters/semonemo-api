@@ -4,6 +4,10 @@ REPOSITORY_DIR=/home/ubuntu/app
 APP_NAME=semonemo-api
 PID_PATH=$REPOSITORY_DIR/PID
 
+echo "git checkout develop"
+
+git checkout develop
+
 echo "change directory"
 
 cd $REPOSITORY_DIR/$APP_NAME/web
