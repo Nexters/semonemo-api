@@ -12,7 +12,7 @@ class MeetingController(
     private val meetingService: MeetingService,
 ) {
 
-    @GetMapping("/meetings")
+    @GetMapping("/api/meetings")
     fun getMeetings(): ResponseEntity<Flux<MeetingGetResponse>> {
         return ResponseEntity.ok(MeetingGetResponse.listOf(meetingService.findMeetings()))
     }
