@@ -5,11 +5,11 @@ import org.springframework.data.mongodb.core.mapping.Document
 
 @Document
 class User(
-    nickname: String
+    nickname: String,
 ) {
 
     @Id
-    var id: String? = null
+    var id: Long? = null
         private set
 
     var nickname = nickname
