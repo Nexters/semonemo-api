@@ -13,7 +13,6 @@ class MeetingController(
 ) {
 
     @GetMapping("/api/meetings")
-    fun getMeetings(): ResponseEntity<Flux<MeetingGetResponse>> {
-        return ResponseEntity.ok(MeetingGetResponse.listOf(meetingService.findMeetings()))
-    }
+    fun getMeetings(): ResponseEntity<Flux<MeetingGetResponse>> =
+        ResponseEntity.ok(MeetingGetResponse.listOf(meetingService.findMeetings()))
 }
