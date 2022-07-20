@@ -13,18 +13,15 @@ data class MeetingGetResponse(
 ) {
 
     companion object {
-        fun listOf(meetings: Flux<Meeting>): Flux<MeetingGetResponse> {
-            return meetings.map { of(it) }
-        }
+        fun listOf(meetings: Flux<Meeting>): Flux<MeetingGetResponse> = meetings.map { of(it) }
 
-        private fun of(meeting: Meeting): MeetingGetResponse {
-            return MeetingGetResponse(
+        private fun of(meeting: Meeting): MeetingGetResponse =
+            MeetingGetResponse(
                 id = meeting.id,
                 host = UserGetResponse.of(meeting.host),
                 place = PlaceGetResponse.of(meeting.place),
                 startDate = meeting.startDate,
                 endDate = meeting.endDate,
             )
-        }
     }
 }
