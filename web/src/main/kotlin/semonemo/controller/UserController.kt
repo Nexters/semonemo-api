@@ -27,4 +27,9 @@ class UserController(
                 Mono.just(ResponseEntity.ok(AuthResponse.fail(it.message)))
             }
     }
+
+    @PostMapping("/api/logout")
+    fun logout(session: WebSession): Mono<ResponseEntity<String>> =
+        session.invalidate()
+            .flatMap { Mono.just(ResponseEntity.ok("SUCCESS")) }
 }
