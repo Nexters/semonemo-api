@@ -1,17 +1,12 @@
 package semonemo.model.entity
 
-import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
 import java.io.Serializable
 
 @Document
 class User(
     nickname: String,
-): Serializable {
-
-    @Id
-    var id: Long? = null
-        private set
+) : AuditableDocument(), Serializable {
 
     var nickname = nickname
         private set
@@ -20,6 +15,6 @@ class User(
         private set
 
     companion object {
-        const val serialVersionUID : Long = 23894278394214L
+        const val serialVersionUID: Long = 23894278394214L
     }
 }

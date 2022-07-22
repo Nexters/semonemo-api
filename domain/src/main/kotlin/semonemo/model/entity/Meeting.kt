@@ -1,6 +1,5 @@
 package semonemo.model.entity
 
-import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
 import org.springframework.format.annotation.DateTimeFormat
 import java.time.LocalDateTime
@@ -11,11 +10,7 @@ class Meeting(
     place: Place,
     startDate: LocalDateTime,
     endDate: LocalDateTime,
-) {
-
-    @Id
-    var id: Long? = null
-        private set
+): AuditableDocument() {
 
     var host = host
         private set
