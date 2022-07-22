@@ -1,6 +1,5 @@
 package semonemo.model.dto
 
-import reactor.core.publisher.Flux
 import semonemo.model.entity.Meeting
 import java.time.LocalDateTime
 
@@ -13,18 +12,15 @@ data class MeetingGetResponse(
 ) {
 
     companion object {
-        fun listOf(meetings: Flux<Meeting>): Flux<MeetingGetResponse> {
-            return meetings.map { of(it) }
-        }
+        fun listOf(meetings: List<Meeting>): List<MeetingGetResponse> = meetings.map { of(it) }
 
-        private fun of(meeting: Meeting): MeetingGetResponse {
-            return MeetingGetResponse(
+        fun of(meeting: Meeting): MeetingGetResponse =
+            MeetingGetResponse(
                 id = meeting.id,
                 host = UserGetResponse.of(meeting.host),
                 place = PlaceGetResponse.of(meeting.place),
                 startDate = meeting.startDate,
                 endDate = meeting.endDate,
             )
-        }
     }
 }
