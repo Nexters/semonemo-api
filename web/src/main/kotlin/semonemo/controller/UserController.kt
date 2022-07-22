@@ -23,7 +23,7 @@ class UserController(
                 session.attributes["LOGIN_USER"] = it
                 Mono.just(ResponseEntity.ok(AuthResponse.success(it)))
             }.onErrorResume {
-                Mono.just(ResponseEntity.ok(AuthResponse.fail("tmp")))
+                Mono.just(ResponseEntity.ok(AuthResponse.fail(it.message)))
             }
     }
 }
