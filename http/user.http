@@ -1,7 +1,7 @@
-### 유저 정보 추가
-POST {{host}}/users
+### 유저 로그인
+POST {{host}}/api/login
 Content-Type: application/json
 
 {
-  "nickname": "aiden"
+  "authKey": "aiden"
 }
