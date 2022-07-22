@@ -18,4 +18,8 @@ class User(
 
     var authKey: String? = null
         private set
+
+    companion object {
+        const val serialVersionUID : Long = 23894278394214L
+    }
 }
