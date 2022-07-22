@@ -1,3 +1,5 @@
 spring:
   profiles:
     include: dev-db
+  session:
+    store-type: mongodb
