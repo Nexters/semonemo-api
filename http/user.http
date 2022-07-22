@@ -5,3 +5,6 @@ Content-Type: application/json
 {
   "authKey": "aiden"
 }
+
+### 유저 로그아웃
+POST {{host}}/api/logout
