@@ -13,9 +13,9 @@ data class MeetingGetResponse(
 ) {
 
     companion object {
-        fun listOf(meetings: Flux<Meeting>): Flux<MeetingGetResponse> = meetings.map { of(it) }
+        fun listOf(meetings: List<Meeting>): List<MeetingGetResponse> = meetings.map { of(it) }
 
-        private fun of(meeting: Meeting): MeetingGetResponse =
+        fun of(meeting: Meeting): MeetingGetResponse =
             MeetingGetResponse(
                 id = meeting.id,
                 host = UserGetResponse.of(meeting.host),
