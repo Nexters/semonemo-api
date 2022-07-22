@@ -1,6 +1,5 @@
 package semonemo.model.dto
 
-import reactor.core.publisher.Flux
 import semonemo.model.entity.Meeting
 import java.time.LocalDateTime
 
