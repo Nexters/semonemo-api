@@ -1,12 +1,12 @@
 package semonemo.controller
 
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.server.WebSession
 import reactor.core.publisher.Mono
 import semonemo.config.CurrentLoginMemberArgumentResolver.Companion.LOGIN_ATTRIBUTE_NAME
-import semonemo.config.LoginUser
 import semonemo.model.dto.MeetingGetResponse
 import semonemo.model.entity.User
 import semonemo.service.MeetingService
@@ -17,9 +17,11 @@ class MeetingController(
 ) {
 
     @GetMapping("/api/meetings")
-    fun getMeetings(session: WebSession): Mono<ResponseEntity<List<MeetingGetResponse>>>  {
-        val user = session.attributes[LOGIN_ATTRIBUTE_NAME] as User
-        println("로그인 유저: ${user.nickname}")
+    fun getMeetings(session: WebSession): Mono<ResponseEntity<List<MeetingGetResponse>>> {
+        val user = session.attributes[LOGIN_ATTRIBUTE_NAME] as User?
+        if (user == null) {
+            return Mono.just(ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null))
+        }
 
         return meetingService.findMeetings()
             .collectList()
