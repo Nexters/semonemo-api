@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.server.WebSession
 import reactor.core.publisher.Mono
-import semonemo.config.CurrentLoginMemberArgumentResolver.Companion.LOGIN_ATTRIBUTE_NAME
+import semonemo.config.LoginUserArgumentResolver.Companion.LOGIN_ATTRIBUTE_NAME
 import semonemo.model.dto.AuthRequest
 import semonemo.model.dto.AuthResponse
 import semonemo.service.UserService
