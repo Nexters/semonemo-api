@@ -9,7 +9,7 @@ import org.springframework.web.server.WebSession
 import reactor.core.publisher.Mono
 
 @Component
-class CurrentLoginMemberArgumentResolver : HandlerMethodArgumentResolver {
+class LoginUserArgumentResolver : HandlerMethodArgumentResolver {
 
     private val session: WebSession? = null
 

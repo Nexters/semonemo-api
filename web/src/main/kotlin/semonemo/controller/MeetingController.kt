@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.server.WebSession
 import reactor.core.publisher.Mono
-import semonemo.config.CurrentLoginMemberArgumentResolver.Companion.LOGIN_ATTRIBUTE_NAME
+import semonemo.config.LoginUserArgumentResolver.Companion.LOGIN_ATTRIBUTE_NAME
 import semonemo.model.dto.MeetingGetResponse
 import semonemo.model.entity.User
 import semonemo.service.MeetingService
