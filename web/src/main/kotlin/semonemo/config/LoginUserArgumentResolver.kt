@@ -7,6 +7,7 @@ import org.springframework.web.reactive.result.method.HandlerMethodArgumentResol
 import org.springframework.web.server.ServerWebExchange
 import org.springframework.web.server.WebSession
 import reactor.core.publisher.Mono
+import semonemo.model.entity.User
 
 @Component
 class LoginUserArgumentResolver : HandlerMethodArgumentResolver {
@@ -29,5 +30,10 @@ class LoginUserArgumentResolver : HandlerMethodArgumentResolver {
 
     companion object {
         const val LOGIN_ATTRIBUTE_NAME = "LOGIN_USER"
+
+        fun findUser(session: WebSession): Mono<User> {
+            val user = session.attributes[LOGIN_ATTRIBUTE_NAME] as User? ?: return Mono.empty()
+            return Mono.just(user)
+        }
     }
 }
