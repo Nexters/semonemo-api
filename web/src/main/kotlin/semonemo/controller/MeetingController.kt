@@ -6,8 +6,9 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.server.WebSession
 import reactor.core.publisher.Mono
-import semonemo.config.LoginUserArgumentResolver.Companion.findUser
+import semonemo.config.LoginUserArgumentResolver
 import semonemo.model.dto.MeetingGetResponse
+import semonemo.model.entity.User
 import semonemo.service.MeetingService
 
 @RestController
@@ -17,11 +18,11 @@ class MeetingController(
 
     @GetMapping("/api/meetings")
     fun getMeetings(session: WebSession): Mono<ResponseEntity<List<MeetingGetResponse>>> {
-        return findUser(session)
-            .flatMap {
-                meetingService.findMeetings()
-                    .collectList()
-                    .flatMap { Mono.just(ResponseEntity.ok(MeetingGetResponse.listOf(it))) }
-            }.switchIfEmpty(Mono.defer { Mono.just(ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null)) })
+        val user = session.attributes[LoginUserArgumentResolver.LOGIN_ATTRIBUTE_NAME] as User?
+            ?: return Mono.defer { Mono.just(ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null)) }
+
+        return meetingService.findMeetings()
+            .collectList()
+            .flatMap { Mono.just(ResponseEntity.ok(MeetingGetResponse.listOf(it))) }
     }
 }
