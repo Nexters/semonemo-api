@@ -10,7 +10,7 @@ class Meeting(
     place: Place,
     startDate: LocalDateTime,
     endDate: LocalDateTime,
-): AuditableDocument() {
+) : AuditableDocument() {
 
     var host = host
         private set
@@ -25,4 +25,16 @@ class Meeting(
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     var endDate = endDate
         private set
+
+    var status: MeetingStatus = MeetingStatus.ACTIVE
+
+    val hostUserId = host.id
+
+    fun remove() {
+        status = MeetingStatus.REMOVED
+    }
+}
+
+enum class MeetingStatus {
+    ACTIVE, REMOVED
 }
