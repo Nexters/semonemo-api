@@ -6,11 +6,11 @@ import org.springframework.web.reactive.result.method.annotation.ArgumentResolve
 
 @Configuration
 class AuthUserConfig(
-    private val currentLoginMemberArgumentResolver: CurrentLoginMemberArgumentResolver
+    private val loginUserArgumentResolver: LoginUserArgumentResolver
 ) : WebFluxConfigurer {
 
     @Override
     override fun configureArgumentResolvers(configurer: ArgumentResolverConfigurer) {
-        configurer.addCustomResolver(currentLoginMemberArgumentResolver)
+        configurer.addCustomResolver(loginUserArgumentResolver)
     }
 }
