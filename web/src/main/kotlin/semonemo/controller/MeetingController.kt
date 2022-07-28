@@ -52,6 +52,15 @@ class MeetingController(
             .flatMap { Mono.just(ResponseEntity.ok(MeetingGetResponse.listOf(it, user))) }
     }
 
+    @GetMapping("/api/meetings/{id}")
+    fun getMeetings(session: WebSession, @PathVariable id: Long): Mono<ResponseEntity<MeetingGetResponse>> {
+        val user = session.attributes[LoginUserArgumentResolver.LOGIN_ATTRIBUTE_NAME] as User?
+            ?: return Mono.defer { Mono.just(ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null)) }
+
+        return meetingService.findMeeting(id)
+            .flatMap { Mono.just(ResponseEntity.ok(MeetingGetResponse.of(it, user))) }
+    }
+
     @DeleteMapping("/api/meetings/{id}")
     fun removeMeeting(session: WebSession, @PathVariable id: Long): Mono<ResponseEntity<MeetingRemoveResponse>> {
         val user = session.attributes[LoginUserArgumentResolver.LOGIN_ATTRIBUTE_NAME] as User?
