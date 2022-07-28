@@ -18,7 +18,7 @@ data class MeetingGetResponse(
     companion object {
         fun listOf(meetings: List<Meeting>, user: User): List<MeetingGetResponse> = meetings.map { of(it, user) }
 
-        private fun of(meeting: Meeting, user: User): MeetingGetResponse =
+        fun of(meeting: Meeting, user: User): MeetingGetResponse =
             MeetingGetResponse(
                 id = meeting.id,
                 startDate = meeting.startDate,

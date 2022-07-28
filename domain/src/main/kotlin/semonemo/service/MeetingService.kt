@@ -18,6 +18,7 @@ class MeetingService(
     private val countersRepository: CountersRepository,
 ) {
 
+    @Transactional
     fun saveMeeting(user: User, request: MeetingSaveRequest): Mono<Meeting> =
         // TODO: counter 조회할 때 lock 걸어야 함
         countersRepository.findById("meetingId")
@@ -31,6 +32,9 @@ class MeetingService(
     // TODO: 정렬 기능 추가
     @Transactional(readOnly = true)
     fun findMeetings(): Flux<Meeting> = meetingRepository.findAllByStatus(MeetingStatus.ACTIVE)
+
+    @Transactional(readOnly = true)
+    fun findMeeting(id: Long): Mono<Meeting> = meetingRepository.findById(id)
 
     @Transactional
     fun removeMeeting(user: User, id: Long): Mono<Meeting> = meetingRepository.findById(id)
