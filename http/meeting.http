@@ -1,5 +1,52 @@
+### 모임 생성
+POST {{host}}/api/meetings
+Content-Type: application/json
+
+{
+  "startDate": "2022-07-29T15:00:00",
+  "endDate": "2022-07-29T18:00:00",
+  "place": {
+    "summary": "상록이집",
+    "address": "상록이집주소",
+    "mapLink": "안알랴줌"
+  }
+}
+
+###
+#{
+#  "startDate": "2022-07-29T15:00:00",
+#  "endDate": "2022-07-29T18:00:00",
+#  "place": {
+#    "summary": "더클라임 클라이밍 짐앤샵 홍대점",
+#    "address": "서울 마포구 양화로 125 경남관광빌딩",
+#    "mapLink": "https://naver.me/FT0k0d37"
+#  }
+#}
+
+###
+#{
+#  "startDate": "2022-07-29T12:00:00",
+#  "endDate": "2022-07-29T14:00:00",
+#  "place": {
+#    "summary": "코알라 클라이밍",
+#    "address": "마포구 월드컵북로 396 누리꿈스퀘어 디지털파빌리온 B1040호",
+#    "mapLink": "https://naver.me/GKovmE2q"
+#  }
+#}
+
+###
+//{
+//  "startDate": "2022-07-29T10:00:00",
+//  "endDate": "2022-07-29T12:00:00",
+//  "place": {
+//    "summary": "비블럭 클라이밍 강남점",
+//    "address": "서울 강남구 논현로 563 언주타워 지하 1층 비블럭 클라이밍",
+//    "mapLink": "https://naver.me/FT0kU0D9"
+//  }
+//}
+
 ### 모임 리스트 조회
 GET {{host}}/api/meetings
 
 ### 모임 제거
-DELETE {{host}}/api/meetings/77
+DELETE {{host}}/api/meetings/92

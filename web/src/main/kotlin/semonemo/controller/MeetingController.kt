@@ -1,16 +1,21 @@
 package semonemo.controller
 
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.server.WebSession
 import reactor.core.publisher.Mono
 import semonemo.config.LoginUserArgumentResolver
 import semonemo.model.dto.MeetingGetResponse
 import semonemo.model.dto.MeetingRemoveResponse
+import semonemo.model.dto.MeetingSaveRequest
+import semonemo.model.dto.MeetingSaveResponse
 import semonemo.model.entity.User
 import semonemo.model.exception.ForbiddenException
 import semonemo.service.MeetingService
@@ -20,6 +25,23 @@ class MeetingController(
     private val meetingService: MeetingService,
 ) {
 
+    @PostMapping("/api/meetings", consumes = [MediaType.APPLICATION_JSON_VALUE])
+    fun createMeeting(
+        @RequestBody request: MeetingSaveRequest,
+        session: WebSession
+    ): Mono<ResponseEntity<MeetingSaveResponse>> {
+        val user = session.attributes[LoginUserArgumentResolver.LOGIN_ATTRIBUTE_NAME] as User?
+            ?: return Mono.defer { Mono.just(ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null)) }
+
+        return meetingService.saveMeeting(user, request)
+            .flatMap { Mono.just(ResponseEntity.ok(MeetingSaveResponse.success(it))) }
+            .onErrorResume {
+                Mono.just(
+                    ResponseEntity.status(HttpStatus.BAD_REQUEST).body(MeetingSaveResponse.fail(it.message))
+                )
+            }
+    }
+
     @GetMapping("/api/meetings")
     fun getMeetings(session: WebSession): Mono<ResponseEntity<List<MeetingGetResponse>>> {
         val user = session.attributes[LoginUserArgumentResolver.LOGIN_ATTRIBUTE_NAME] as User?
@@ -27,7 +49,7 @@ class MeetingController(
 
         return meetingService.findMeetings()
             .collectList()
-            .flatMap { Mono.just(ResponseEntity.ok(MeetingGetResponse.listOf(it))) }
+            .flatMap { Mono.just(ResponseEntity.ok(MeetingGetResponse.listOf(it, user))) }
     }
 
     @DeleteMapping("/api/meetings/{id}")
