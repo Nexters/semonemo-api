@@ -45,7 +45,7 @@ class MeetingController(
 
         return meetingService.findMeetings()
             .collectList()
-            .flatMap { Mono.just(ResponseEntity.ok(MeetingGetResponse.listOf(it))) }
+            .flatMap { Mono.just(ResponseEntity.ok(MeetingGetResponse.listOf(it, user))) }
     }
 
     @DeleteMapping("/api/meetings/{id}")

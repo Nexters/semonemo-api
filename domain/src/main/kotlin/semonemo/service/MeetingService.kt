@@ -21,9 +21,9 @@ class MeetingService(
     fun saveMeeting(user: User, request: MeetingSaveRequest): Mono<Meeting> =
         // TODO: counter 조회할 때 lock 걸어야 함
         countersRepository.findById("meetingId")
-            .flatMap {
-                it.increaseSeq()
-                countersRepository.save(it).flatMap {
+            .flatMap { counter ->
+                counter.increaseSeq()
+                countersRepository.save(counter).flatMap {
                     meetingRepository.save(request.toMeeting(it.seq, user))
                 }
             }
