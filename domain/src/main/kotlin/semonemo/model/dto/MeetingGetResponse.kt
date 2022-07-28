@@ -12,7 +12,7 @@ data class MeetingGetResponse(
     val host: UserGetResponse,
     val loginUser: LoginUserInfoResponse,
     val isEnd: Boolean = false,
-    val createdAt: LocalDateTime?,
+//    val createdAt: LocalDateTime?,
 ) {
 
     companion object {
@@ -26,7 +26,7 @@ data class MeetingGetResponse(
                 place = PlaceGetResponse.of(meeting.place),
                 host = UserGetResponse.of(meeting.host),
                 loginUser = LoginUserInfoResponse(user.id == meeting.hostUserId, false),
-                createdAt = meeting.createdAt,
+//                createdAt = meeting.createdAt,
             )
     }
 }
