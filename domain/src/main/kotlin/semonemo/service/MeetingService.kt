@@ -4,16 +4,30 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+import semonemo.model.dto.MeetingSaveRequest
 import semonemo.model.entity.Meeting
 import semonemo.model.entity.MeetingStatus
 import semonemo.model.entity.User
 import semonemo.model.exception.ForbiddenException
 import semonemo.repository.MeetingRepository
+import semonemo.repository.CountersRepository
 
 @Service
 class MeetingService(
     private val meetingRepository: MeetingRepository,
+    private val countersRepository: CountersRepository,
 ) {
+
+    fun saveMeeting(user: User, request: MeetingSaveRequest): Mono<Meeting> =
+        // TODO: counter 조회할 때 lock 걸어야 함
+        countersRepository.findById("meetingId")
+            .flatMap {
+                it.increaseSeq()
+                countersRepository.save(it).flatMap {
+                    meetingRepository.save(request.toMeeting(it.seq, user))
+                }
+            }
+            .onErrorResume { Mono.defer { Mono.error(it) } }
 
     // TODO: 정렬 기능 추가
     @Transactional(readOnly = true)

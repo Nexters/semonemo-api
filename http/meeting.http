@@ -1,5 +1,19 @@
+### 모임 생성
+POST {{host}}/api/meetings
+Content-Type: application/json
+
+{
+  "startDate": "2022-07-28T20:00:00",
+  "endDate": "2022-07-29T21:00:00",
+  "place": {
+    "summary": "ㅎㅇ",
+    "address": "ㅎㅇㅎㅇ",
+    "mapLink": "ㅎㅇㅎㅇㅎㅇ"
+  }
+}
+
 ### 모임 리스트 조회
 GET {{host}}/api/meetings
 
 ### 모임 제거
-DELETE {{host}}/api/meetings/77
+DELETE {{host}}/api/meetings/89
