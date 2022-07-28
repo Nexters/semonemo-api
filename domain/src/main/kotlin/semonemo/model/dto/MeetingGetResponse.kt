@@ -25,7 +25,7 @@ data class MeetingGetResponse(
                 endDate = meeting.endDate,
                 place = PlaceGetResponse.of(meeting.place),
                 host = UserGetResponse.of(meeting.host),
-                loginUser = LoginUserInfoResponse(user.id == meeting.hostUserId, false),
+                loginUser = LoginUserInfoResponse(user.id == meeting.hostUserId, user.id == meeting.hostUserId),
 //                createdAt = meeting.createdAt,
             )
     }
