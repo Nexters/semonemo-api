@@ -35,7 +35,11 @@ class MeetingController(
 
         return meetingService.saveMeeting(user, request)
             .flatMap { Mono.just(ResponseEntity.ok(MeetingSaveResponse.success(it))) }
-            .onErrorResume { Mono.just(ResponseEntity.ok(MeetingSaveResponse.fail(it.message))) }
+            .onErrorResume {
+                Mono.just(
+                    ResponseEntity.status(HttpStatus.BAD_REQUEST).body(MeetingSaveResponse.fail(it.message))
+                )
+            }
     }
 
     @GetMapping("/api/meetings")
