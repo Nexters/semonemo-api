@@ -23,10 +23,9 @@ class MeetingService(
         countersRepository.findById("meetingId")
             .flatMap { counter ->
                 counter.increaseSeq()
-                countersRepository.save(counter).flatMap {
-                    meetingRepository.save(request.toMeeting(it.seq, user))
-                }
+                Mono.zip(countersRepository.save(counter), meetingRepository.save(request.toMeeting(counter.seq, user)))
             }
+            .map { tuple -> tuple.t2 }
             .onErrorResume { Mono.defer { Mono.error(it) } }
 
     // TODO: 정렬 기능 추가
