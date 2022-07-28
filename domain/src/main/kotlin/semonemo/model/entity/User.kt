@@ -1,5 +1,6 @@
 package semonemo.model.entity
 
+import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
 import java.io.Serializable
 
@@ -8,9 +9,13 @@ class User(
     nickname: String,
 ) : AuditableDocument(), Serializable {
 
+    @Id
+    var id: Long? = null
+
     var nickname = nickname
         private set
 
+    @Transient
     var authKey: String? = null
         private set
 

@@ -1,5 +1,6 @@
 package semonemo.model.entity
 
+import org.springframework.data.annotation.Id
 import org.springframework.data.annotation.Transient
 import org.springframework.data.mongodb.core.mapping.Document
 import org.springframework.format.annotation.DateTimeFormat
@@ -7,11 +8,19 @@ import java.time.LocalDateTime
 
 @Document
 class Meeting(
+    id: Long,
     host: User,
     place: Place,
     startDate: LocalDateTime,
     endDate: LocalDateTime,
 ) : AuditableDocument() {
+
+    init {
+        validateDate(startDate, endDate)
+    }
+
+    @Id
+    var id = id
 
     var host = host
         private set
@@ -37,6 +46,14 @@ class Meeting(
 
     fun remove() {
         status = MeetingStatus.REMOVED
+    }
+
+    private fun validateDate(startDate: LocalDateTime, endDate: LocalDateTime) {
+        require(startDate.isBefore(endDate)) { "시작 날짜는 종료 날짜보다 이전이어야 합니다. (startDate: $startDate, endDate: $endDate)" }
+    }
+
+    companion object {
+        const val serialVersionUID: Long = -68923944814214L
     }
 }
 
