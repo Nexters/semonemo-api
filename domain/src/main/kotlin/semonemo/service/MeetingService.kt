@@ -5,28 +5,42 @@ import org.springframework.transaction.annotation.Transactional
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import semonemo.model.dto.MeetingSaveRequest
+import semonemo.model.entity.Invitation
 import semonemo.model.entity.Meeting
 import semonemo.model.entity.MeetingStatus
 import semonemo.model.entity.User
 import semonemo.model.exception.ForbiddenException
 import semonemo.repository.MeetingRepository
 import semonemo.repository.CountersRepository
+import semonemo.repository.InvitationRepository
 
 @Service
 class MeetingService(
     private val meetingRepository: MeetingRepository,
+    private val invitationRepository: InvitationRepository,
     private val countersRepository: CountersRepository,
 ) {
 
     @Transactional
-    fun saveMeeting(user: User, request: MeetingSaveRequest): Mono<Meeting> =
+    fun saveMeeting(host: User, request: MeetingSaveRequest): Mono<Meeting> =
         // TODO: counter 조회할 때 lock 걸어야 함
-        countersRepository.findById("meetingId")
-            .flatMap { counter ->
-                counter.increaseSeq()
-                Mono.zip(countersRepository.save(counter), meetingRepository.save(request.toMeeting(counter.seq, user)))
+        Mono.zip(countersRepository.findById("meetingId"), countersRepository.findById("invitationId"))
+            .flatMap { tuple ->
+                val meetingCounter = tuple.t1
+                val invitationCounter = tuple.t2
+                val meeting = request.toMeeting(meetingCounter.seq, host)
+
+                meetingCounter.increaseSeq()
+                invitationCounter.increaseSeq()
+
+                Mono.zip(
+                    countersRepository.save(meetingCounter),
+                    countersRepository.save(invitationCounter),
+                    meetingRepository.save(meeting),
+                    invitationRepository.save(Invitation.host(invitationCounter.seq, meeting, host)),
+                )
             }
-            .map { tuple -> tuple.t2 }
+            .flatMap { tuple -> Mono.just(tuple.t3) }
             .onErrorResume { Mono.defer { Mono.error(it) } }
 
     // TODO: 정렬 기능 추가

@@ -8,8 +8,8 @@ class Invitation(
     id: Long,
     meeting: Meeting,
     user: User,
-    wantToAttend: Boolean,
-    attended: Boolean,
+    wantToAttend: Boolean = false,
+    attended: Boolean = false,
 ) : AuditableDocument() {
 
     @Id
@@ -27,4 +27,9 @@ class Invitation(
 
     var attended = attended
         private set
+
+    companion object {
+        fun host(id: Long, meeting: Meeting, host: User): Invitation =
+            Invitation(id = id, meeting = meeting, user = host, wantToAttend = true, attended = true)
+    }
 }
