@@ -31,5 +31,8 @@ class Invitation(
     companion object {
         fun host(id: Long, meeting: Meeting, host: User): Invitation =
             Invitation(id = id, meeting = meeting, user = host, wantToAttend = true, attended = true)
+
+        fun guest(id: Long, meeting: Meeting, guest: User): Invitation =
+            Invitation(id = id, meeting = meeting, user = guest)
     }
 }
