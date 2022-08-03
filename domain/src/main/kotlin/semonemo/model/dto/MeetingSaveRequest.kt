@@ -16,7 +16,7 @@ data class MeetingSaveRequest(
 ) {
 
     fun toMeeting(id: Long, host: User): Meeting {
-        require(startDate.isAfter(LocalDateTime.now())) { "시작 날짜는 현재 날짜 이후여야 합니다. (startDate: $startDate)" }
+        require(startDate.isAfter(LocalDateTime.now())) { "시작 날짜는 현재 날짜 이후여야 합니다." }
 
         return Meeting(id = id, host = host, place = place.toPlace(), startDate = startDate, endDate = endDate)
     }

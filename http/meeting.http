@@ -3,8 +3,8 @@ POST {{host}}/api/meetings
 Content-Type: application/json
 
 {
-  "startDate": "2022-07-29T15:00:00",
-  "endDate": "2022-07-29T18:00:00",
+  "startDate": "2026-08-03T15:00:00",
+  "endDate": "2026-08-03T18:00:00",
   "place": {
     "summary": "상록이집",
     "address": "상록이집주소",
@@ -53,3 +53,18 @@ GET {{host}}/api/meetings/100
 
 ### 모임 제거
 DELETE {{host}}/api/meetings/100
+
+### 네이버 지도(공유하기 링크)
+GET https://naver.me/x5WXm3oi
+
+### 네이버 지도(공유하기 링크와 매핑되는 실제 링크)
+GET https://map.naver.com/v5/entry/place/1243395797?placePath=%2Fhome&c=14135018.0288431,4507189.7679893,15,0,0,0,dh
+
+### 네이버 지도(지도 검색해서 나오는 링크)
+GET https://map.naver.com/v5/search/%EC%82%AC%EB%8B%B9%EB%A7%9B%EC%A7%91/place/1243395797?placePath=%3Fentry=pll%26from=nx%26fromNxList=true&n_ad_group_type=10&n_query=%EC%82%AC%EB%8B%B9%EB%A7%9B%EC%A7%91&c=14134551.0463733,4507189.7679893,15,0,0,0,dh
+
+### 카카오맵(공유하기 링크)
+GET http://kko.to/e7D1gho5s
+
+### 카카오맵(공유하기 링크와 매핑되는 실제 링크)
+GET https://map.kakao.com/?map_type=TYPE_MAP&itemId=1884948997&urlLevel=3&urlX=490508&urlY=1105965
