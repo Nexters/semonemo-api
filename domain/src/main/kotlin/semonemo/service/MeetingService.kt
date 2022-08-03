@@ -52,14 +52,14 @@ class MeetingService(
 
     @Transactional
     fun removeMeeting(user: User, id: Long): Mono<Meeting> = meetingRepository.findById(id)
-        .switchIfEmpty(Mono.defer { Mono.error(IllegalArgumentException("존재하지 않는 모임입니다. (id: $id)")) })
+        .switchIfEmpty(Mono.defer { Mono.error(IllegalArgumentException("존재하지 않는 모임입니다.")) })
         .flatMap {
             if (it.hostUserId != user.id) {
                 return@flatMap Mono.defer { Mono.error(ForbiddenException("권한이 없는 유저입니다. (호스트가 아님)")) }
             }
 
             if (it.isRemoved) {
-                return@flatMap Mono.defer { Mono.error(IllegalArgumentException("이미 제거된 모임입니다. (id: $id)")) }
+                return@flatMap Mono.defer { Mono.error(IllegalArgumentException("이미 제거된 모임입니다.")) }
             }
 
             it.remove()

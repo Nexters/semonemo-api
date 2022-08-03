@@ -49,7 +49,7 @@ class Meeting(
     }
 
     private fun validateDate(startDate: LocalDateTime, endDate: LocalDateTime) {
-        require(startDate.isBefore(endDate)) { "시작 날짜는 종료 날짜보다 이전이어야 합니다. (startDate: $startDate, endDate: $endDate)" }
+        require(startDate.isBefore(endDate)) { "시작 날짜는 종료 날짜보다 이전이어야 합니다." }
     }
 
     companion object {
