@@ -14,7 +14,6 @@ class Invitation(
 
     @Id
     var id = id
-        private set
 
     var meeting = meeting
         private set
