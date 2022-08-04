@@ -50,7 +50,7 @@ class MeetingController(
 
         val now = LocalDateTime.now()
 
-        return meetingService.findMeetings(now)
+        return meetingService.findMeetings(now, user)
             .collectList()
             .flatMap { Mono.just(ResponseEntity.ok(MeetingGetResponse.listOf(it, user, now))) }
     }
