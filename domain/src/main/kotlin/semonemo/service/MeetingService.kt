@@ -50,6 +50,7 @@ class MeetingService(
             meetingRepository.findAllByStatusAndEndDateBeforeOrderByStartDate(endDate = now),
         ).concatMap { mergeWithParticipants(it) }
 
+    // TODO: 초대받지 않은 모임은 조회 권한이 없어야 함
     @Transactional(readOnly = true)
     fun findMeeting(id: Long): Mono<Meeting> =
         meetingRepository.findById(id)
