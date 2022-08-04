@@ -26,4 +26,20 @@ class User(
     companion object {
         const val serialVersionUID: Long = 23894278394214L
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is User) return false
+
+        if (id != other.id) return false
+        if (nickname != other.nickname) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = id?.hashCode() ?: 0
+        result = 31 * result + nickname.hashCode()
+        return result
+    }
 }
