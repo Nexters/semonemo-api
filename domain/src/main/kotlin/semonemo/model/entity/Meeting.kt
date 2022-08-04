@@ -41,6 +41,9 @@ class Meeting(
     @Transient
     val hostUserId = host.id
 
+    @Transient
+    var participants: List<User> = listOf()
+
     val isRemoved: Boolean
         get() = status == MeetingStatus.REMOVED
 
