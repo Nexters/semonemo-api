@@ -4,8 +4,17 @@ import org.springframework.data.repository.reactive.ReactiveCrudRepository
 import reactor.core.publisher.Flux
 import semonemo.model.entity.Meeting
 import semonemo.model.entity.MeetingStatus
+import java.time.LocalDateTime
 
 interface MeetingRepository : ReactiveCrudRepository<Meeting, Long> {
 
-    fun findAllByStatus(status: MeetingStatus): Flux<Meeting>
+    fun findAllByStatusAndEndDateBeforeOrderByStartDate(
+        status: MeetingStatus = MeetingStatus.ACTIVE,
+        endDate: LocalDateTime = LocalDateTime.now()
+    ): Flux<Meeting>
+
+    fun findAllByStatusAndEndDateAfterOrderByStartDate(
+        status: MeetingStatus = MeetingStatus.ACTIVE,
+        endDate: LocalDateTime = LocalDateTime.now()
+    ): Flux<Meeting>
 }
