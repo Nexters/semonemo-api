@@ -7,12 +7,12 @@ import reactor.core.publisher.Mono
 import semonemo.model.dto.MeetingSaveRequest
 import semonemo.model.entity.Invitation
 import semonemo.model.entity.Meeting
-import semonemo.model.entity.MeetingStatus
 import semonemo.model.entity.User
 import semonemo.model.exception.ForbiddenException
 import semonemo.repository.MeetingRepository
 import semonemo.repository.CountersRepository
 import semonemo.repository.InvitationRepository
+import java.time.LocalDateTime
 
 @Service
 class MeetingService(
@@ -43,12 +43,17 @@ class MeetingService(
             .flatMap { tuple -> Mono.just(tuple.t3) }
             .onErrorResume { Mono.defer { Mono.error(it) } }
 
-    // TODO: 정렬 기능 추가
     @Transactional(readOnly = true)
-    fun findMeetings(): Flux<Meeting> = meetingRepository.findAllByStatus(MeetingStatus.ACTIVE)
+    fun findMeetings(now: LocalDateTime): Flux<Meeting> =
+        Flux.concat(
+            meetingRepository.findAllByStatusAndEndDateBeforeOrderByStartDate(endDate = now),
+            meetingRepository.findAllByStatusAndEndDateAfterOrderByStartDate(endDate = now)
+        ).flatMap { mergeWithParticipants(it) }
 
     @Transactional(readOnly = true)
-    fun findMeeting(id: Long): Mono<Meeting> = meetingRepository.findById(id)
+    fun findMeeting(id: Long): Mono<Meeting> =
+        meetingRepository.findById(id)
+            .flatMap { mergeWithParticipants(it) }
 
     @Transactional
     fun removeMeeting(user: User, id: Long): Mono<Meeting> = meetingRepository.findById(id)
@@ -65,4 +70,14 @@ class MeetingService(
             it.remove()
             meetingRepository.save(it)
         }
+
+    private fun mergeWithParticipants(meeting: Meeting) =
+        invitationRepository.findByMeetingId(meeting.id)
+            .collectList()
+            .flatMap { invitations ->
+                val participants = invitations.map { it.user }.toList()
+                meeting.participants = participants
+
+                Mono.just(meeting)
+            }
 }

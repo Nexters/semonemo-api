@@ -11,14 +11,24 @@ data class MeetingGetResponse(
     val place: PlaceGetResponse,
     val host: UserGetResponse,
     val loginUser: LoginUserInfoResponse,
-    val isEnd: Boolean = false,
+    val isEnd: Boolean,
+    val participants: List<ParticipantGetResponse>
 //    val createdAt: LocalDateTime?,
 ) {
 
     companion object {
-        fun listOf(meetings: List<Meeting>, user: User): List<MeetingGetResponse> = meetings.map { of(it, user) }
+        fun listOf(
+            meetings: List<Meeting>,
+            user: User,
+            now: LocalDateTime = LocalDateTime.now()
+        ): List<MeetingGetResponse> =
+            meetings.map { of(it, user, now) }
 
-        fun of(meeting: Meeting, user: User): MeetingGetResponse =
+        fun of(
+            meeting: Meeting,
+            user: User,
+            now: LocalDateTime = LocalDateTime.now()
+        ): MeetingGetResponse =
             MeetingGetResponse(
                 id = meeting.id,
                 startDate = meeting.startDate,
@@ -26,6 +36,8 @@ data class MeetingGetResponse(
                 place = PlaceGetResponse.of(meeting.place),
                 host = UserGetResponse.of(meeting.host),
                 loginUser = LoginUserInfoResponse(user.id == meeting.hostUserId, user.id == meeting.hostUserId),
+                isEnd = meeting.endDate.isBefore(now),
+                participants = ParticipantGetResponse.listOf(meeting.participants)
 //                createdAt = meeting.createdAt,
             )
     }

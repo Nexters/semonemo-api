@@ -19,6 +19,7 @@ import semonemo.model.dto.MeetingSaveResponse
 import semonemo.model.entity.User
 import semonemo.model.exception.ForbiddenException
 import semonemo.service.MeetingService
+import java.time.LocalDateTime
 
 @RestController
 class MeetingController(
@@ -47,9 +48,11 @@ class MeetingController(
         val user = session.attributes[LoginUserArgumentResolver.LOGIN_ATTRIBUTE_NAME] as User?
             ?: return Mono.defer { Mono.just(ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null)) }
 
-        return meetingService.findMeetings()
+        val now = LocalDateTime.now()
+
+        return meetingService.findMeetings(now)
             .collectList()
-            .flatMap { Mono.just(ResponseEntity.ok(MeetingGetResponse.listOf(it, user))) }
+            .flatMap { Mono.just(ResponseEntity.ok(MeetingGetResponse.listOf(it, user, now))) }
     }
 
     @GetMapping("/api/meetings/{id}")

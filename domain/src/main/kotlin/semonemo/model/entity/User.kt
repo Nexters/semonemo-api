@@ -7,6 +7,7 @@ import java.io.Serializable
 @Document
 class User(
     nickname: String,
+    group: String?,
 ) : AuditableDocument(), Serializable {
 
     @Id
@@ -17,6 +18,9 @@ class User(
 
     @Transient
     var authKey: String? = null
+        private set
+
+    var group = group
         private set
 
     companion object {
