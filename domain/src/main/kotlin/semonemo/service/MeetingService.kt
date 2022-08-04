@@ -46,9 +46,9 @@ class MeetingService(
     @Transactional(readOnly = true)
     fun findMeetings(now: LocalDateTime): Flux<Meeting> =
         Flux.concat(
+            meetingRepository.findAllByStatusAndEndDateAfterOrderByStartDate(endDate = now),
             meetingRepository.findAllByStatusAndEndDateBeforeOrderByStartDate(endDate = now),
-            meetingRepository.findAllByStatusAndEndDateAfterOrderByStartDate(endDate = now)
-        ).flatMap { mergeWithParticipants(it) }
+        ).concatMap { mergeWithParticipants(it) }
 
     @Transactional(readOnly = true)
     fun findMeeting(id: Long): Mono<Meeting> =
