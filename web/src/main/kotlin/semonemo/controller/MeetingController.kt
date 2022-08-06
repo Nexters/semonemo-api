@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.server.WebSession
@@ -16,6 +17,7 @@ import semonemo.model.dto.MeetingGetResponse
 import semonemo.model.dto.MeetingRemoveResponse
 import semonemo.model.dto.MeetingSaveRequest
 import semonemo.model.dto.MeetingSaveResponse
+import semonemo.model.dto.WantToAttendRequest
 import semonemo.model.entity.User
 import semonemo.model.exception.ForbiddenException
 import semonemo.service.MeetingService
@@ -83,6 +85,24 @@ class MeetingController(
                         ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null)
                     )
                 }
+            }
+    }
+
+    @PutMapping("/api/meetings/{id}/attendance")
+    fun updateWantToAttend(
+        session: WebSession,
+        @PathVariable id: Long,
+        @RequestBody wantToAttendRequest: WantToAttendRequest
+    ): Mono<ResponseEntity<MeetingSaveResponse>> {
+        val user = session.attributes[LoginUserArgumentResolver.LOGIN_ATTRIBUTE_NAME] as User?
+            ?: return Mono.defer { Mono.just(ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null)) }
+
+        return meetingService.updateWantToAttend(id, user, wantToAttendRequest)
+            .flatMap { Mono.just(ResponseEntity.ok(MeetingSaveResponse.success(it))) }
+            .onErrorResume {
+                Mono.just(
+                    ResponseEntity.status(HttpStatus.BAD_REQUEST).body(MeetingSaveResponse.fail(it.message))
+                )
             }
     }
 }

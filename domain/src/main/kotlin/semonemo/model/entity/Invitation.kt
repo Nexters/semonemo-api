@@ -22,7 +22,6 @@ class Invitation(
         private set
 
     var wantToAttend = wantToAttend
-        private set
 
     var attended = attended
         private set
