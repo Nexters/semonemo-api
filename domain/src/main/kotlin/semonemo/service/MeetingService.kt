@@ -5,6 +5,7 @@ import org.springframework.transaction.annotation.Transactional
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import semonemo.model.dto.MeetingSaveRequest
+import semonemo.model.dto.WantToAttendRequest
 import semonemo.model.entity.Invitation
 import semonemo.model.entity.Meeting
 import semonemo.model.entity.User
@@ -72,6 +73,26 @@ class MeetingService(
             it.remove()
             meetingRepository.save(it)
         }
+
+    @Transactional
+    fun updateWantToAttend(id: Long, user: User, wantToAttendRequest: WantToAttendRequest): Mono<Meeting> =
+        meetingRepository.findById(id)
+            .switchIfEmpty(Mono.defer { Mono.error(IllegalArgumentException("존재하지 않는 모임입니다.")) })
+            .flatMap { meeting ->
+                if (meeting.isStarted) {
+                    return@flatMap Mono.defer { Mono.error(IllegalStateException("이미 시작된 모임입니다.")) }
+                }
+
+                invitationRepository.findByMeetingIdAndUserId(id, user.id!!)
+                    .switchIfEmpty(Mono.defer { Mono.error(IllegalStateException("초대받지 않은 모임입니다.")) })
+                    .doOnNext { invitation ->
+                        invitation.wantToAttend = wantToAttendRequest.wantToAttend
+                    }.flatMap {
+                        invitationRepository.save(it).flatMap {
+                            Mono.just(meeting)
+                        }
+                    }
+            }
 
     private fun mergeWithParticipants(meeting: Meeting): Mono<Meeting> =
         invitationRepository.findByMeetingIdAndWantToAttend(meeting.id)
