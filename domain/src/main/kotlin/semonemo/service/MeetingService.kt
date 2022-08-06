@@ -49,7 +49,7 @@ class MeetingService(
             meetingRepository.findAllByStatusAndEndDateAfterOrderByStartDate(endDate = now),
             meetingRepository.findAllByStatusAndEndDateBeforeOrderByStartDate(endDate = now),
         ).concatMap { mergeWithParticipants(it) }
-            .filter { it.participants.contains(user) }
+            .filterWhen { isUserInvited(it, user) }
 
     // TODO: 초대받지 않은 모임은 조회 권한이 없어야 함
     @Transactional(readOnly = true)
@@ -73,13 +73,21 @@ class MeetingService(
             meetingRepository.save(it)
         }
 
-    private fun mergeWithParticipants(meeting: Meeting) =
-        invitationRepository.findByMeetingId(meeting.id)
+    private fun mergeWithParticipants(meeting: Meeting): Mono<Meeting> =
+        invitationRepository.findByMeetingIdAndWantToAttend(meeting.id)
             .collectList()
             .flatMap { invitations ->
                 val participants = invitations.map { it.user }.toList()
                 meeting.participants = participants
 
                 Mono.just(meeting)
+            }
+
+    private fun isUserInvited(meeting: Meeting, user: User): Mono<Boolean> =
+        invitationRepository.findByMeetingId(meeting.id)
+            .collectList()
+            .flatMap { invitations ->
+                val invitees = invitations.map { it.user }.toList()
+                Mono.just(invitees.contains(user))
             }
 }
