@@ -7,7 +7,7 @@ import org.springframework.session.data.mongo.config.annotation.web.reactive.Ena
 import java.time.Duration
 
 @Configuration
-@EnableMongoWebSession(maxInactiveIntervalInSeconds = 3600)
+@EnableMongoWebSession(maxInactiveIntervalInSeconds = Int.MAX_VALUE)
 class MongoWebSessionConfig {
 
     @Bean
