@@ -1,7 +1,7 @@
-### 초대 생성
+### 모임 초대
 POST {{host}}/api/invitations
 Content-Type: application/json
 
 {
-  "meetingId": 102
+  "meetingId": 129
 }

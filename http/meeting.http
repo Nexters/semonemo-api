@@ -3,8 +3,8 @@ POST {{host}}/api/meetings
 Content-Type: application/json
 
 {
-  "startDate": "2026-08-03T15:00:00",
-  "endDate": "2026-08-03T18:00:00",
+  "startDate": "2022-08-07T18:40:00",
+  "endDate": "2022-08-07T18:46:01",
   "place": {
     "summary": "상록이집",
     "address": "상록이집주소",
@@ -13,58 +13,60 @@ Content-Type: application/json
 }
 
 ###
-#{
-#  "startDate": "2022-07-29T15:00:00",
-#  "endDate": "2022-07-29T18:00:00",
-#  "place": {
-#    "summary": "더클라임 클라이밍 짐앤샵 홍대점",
-#    "address": "서울 마포구 양화로 125 경남관광빌딩",
-#    "mapLink": "https://naver.me/FT0k0d37"
-#  }
-#}
-
-###
-#{
-#  "startDate": "2022-07-29T12:00:00",
-#  "endDate": "2022-07-29T14:00:00",
-#  "place": {
-#    "summary": "코알라 클라이밍",
-#    "address": "마포구 월드컵북로 396 누리꿈스퀘어 디지털파빌리온 B1040호",
-#    "mapLink": "https://naver.me/GKovmE2q"
-#  }
-#}
-
-###
 //{
-//  "startDate": "2022-07-29T10:00:00",
-//  "endDate": "2022-07-29T12:00:00",
+//  "startDate": "2023-07-29T15:00:00",
+//  "endDate": "2023-07-29T18:00:00",
 //  "place": {
-//    "summary": "비블럭 클라이밍 강남점",
-//    "address": "서울 강남구 논현로 563 언주타워 지하 1층 비블럭 클라이밍",
-//    "mapLink": "https://naver.me/FT0kU0D9"
+//    "summary": "더클라임 클라이밍 짐앤샵 홍대점",
+//    "address": "서울 마포구 양화로 125 경남관광빌딩",
+//    "mapLink": "https://naver.me/FT0k0d37"
 //  }
 //}
+
+###
+
+//{
+//  "startDate": "2023-07-29T12:00:00",
+//  "endDate": "2023-07-29T14:00:00",
+//  "place": {
+//    "summary": "코알라 클라이밍",
+//    "address": "마포구 월드컵북로 396 누리꿈스퀘어 디지털파빌리온 B1040호",
+//    "mapLink": "https://naver.me/GKovmE2q"
+//  }
+//}
+
+###
+#{
+#  "startDate": "2023-07-29T10:00:00",
+#  "endDate": "2023-07-29T12:00:00",
+#  "place": {
+#    "summary": "비블럭 클라이밍 강남점",
+#    "address": "서울 강남구 논현로 563 언주타워 지하 1층 비블럭 클라이밍",
+#    "mapLink": "https://naver.me/FT0kU0D9"
+#  }
+#}
 
 ### 모임 리스트 조회
 GET {{host}}/api/meetings
 
 ### 모임 상세 조회
-GET {{host}}/api/meetings/100
+GET {{host}}/api/meetings/126
 
 ### 모임 제거
 DELETE {{host}}/api/meetings/100
 
-### 네이버 지도(공유하기 링크)
-GET https://naver.me/x5WXm3oi
+### 갈게요/못가요
+PUT {{host}}/api/meetings/129/attendance
+Content-Type: application/json
 
-### 네이버 지도(공유하기 링크와 매핑되는 실제 링크)
-GET https://map.naver.com/v5/entry/place/1243395797?placePath=%2Fhome&c=14135018.0288431,4507189.7679893,15,0,0,0,dh
+{
+  "wantToAttend": true
+}
 
-### 네이버 지도(지도 검색해서 나오는 링크)
-GET https://map.naver.com/v5/search/%EC%82%AC%EB%8B%B9%EB%A7%9B%EC%A7%91/place/1243395797?placePath=%3Fentry=pll%26from=nx%26fromNxList=true&n_ad_group_type=10&n_query=%EC%82%AC%EB%8B%B9%EB%A7%9B%EC%A7%91&c=14134551.0463733,4507189.7679893,15,0,0,0,dh
+### 출석/결석 처리
+PUT {{host}}/api/meetings/129/users/52/attendance
+Content-Type: application/json
 
-### 카카오맵(공유하기 링크)
-GET http://kko.to/e7D1gho5s
-
-### 카카오맵(공유하기 링크와 매핑되는 실제 링크)
-GET https://map.kakao.com/?map_type=TYPE_MAP&itemId=1884948997&urlLevel=3&urlX=490508&urlY=1105965
+{
+  "attend": true
+}

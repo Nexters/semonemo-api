@@ -4,7 +4,9 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+import semonemo.model.dto.AttendanceUpdateRequest
 import semonemo.model.dto.MeetingSaveRequest
+import semonemo.model.dto.WantToAttendRequest
 import semonemo.model.entity.Invitation
 import semonemo.model.entity.Meeting
 import semonemo.model.entity.User
@@ -49,7 +51,7 @@ class MeetingService(
             meetingRepository.findAllByStatusAndEndDateAfterOrderByStartDate(endDate = now),
             meetingRepository.findAllByStatusAndEndDateBeforeOrderByStartDate(endDate = now),
         ).concatMap { mergeWithParticipants(it) }
-            .filter { it.participants.contains(user) }
+            .filterWhen { isUserInvited(it, user) }
 
     // TODO: 초대받지 않은 모임은 조회 권한이 없어야 함
     @Transactional(readOnly = true)
@@ -73,13 +75,72 @@ class MeetingService(
             meetingRepository.save(it)
         }
 
-    private fun mergeWithParticipants(meeting: Meeting) =
-        invitationRepository.findByMeetingId(meeting.id)
+    @Transactional
+    fun updateWantToAttend(id: Long, user: User, request: WantToAttendRequest): Mono<Meeting> =
+        meetingRepository.findById(id)
+            .switchIfEmpty(Mono.defer { Mono.error(IllegalArgumentException("존재하지 않는 모임입니다.")) })
+            .flatMap { meeting ->
+                if (meeting.isStarted) {
+                    return@flatMap Mono.defer { Mono.error(IllegalStateException("이미 시작된 모임입니다.")) }
+                }
+
+                invitationRepository.findByMeetingIdAndUserId(id, user.id!!)
+                    .switchIfEmpty(Mono.defer { Mono.error(IllegalStateException("초대받지 않은 모임입니다.")) })
+                    .doOnNext { invitation ->
+                        invitation.wantToAttend = request.wantToAttend
+                    }.flatMap {
+                        invitationRepository.save(it).flatMap {
+                            Mono.just(meeting)
+                        }
+                    }
+            }
+
+    @Transactional
+    fun updateAttendance(
+        loginUser: User,
+        meetingId: Long,
+        userId: Long,
+        request: AttendanceUpdateRequest
+    ): Mono<Meeting> = meetingRepository.findById(meetingId)
+        .switchIfEmpty(Mono.defer { Mono.error(IllegalArgumentException("존재하지 않는 모임입니다.")) })
+        .flatMap { meeting ->
+            if (!meeting.isOnGoing) {
+                return@flatMap Mono.defer { Mono.error(IllegalStateException("진행중인 모임이 아닙니다.")) }
+            }
+
+            if (meeting.hostUserId != loginUser.id) {
+                return@flatMap Mono.defer { Mono.error(ForbiddenException("출석 처리 권한이 없습니다.")) }
+            }
+
+            invitationRepository.findByMeetingIdAndUserId(meetingId, userId)
+                .switchIfEmpty(Mono.defer { Mono.error(IllegalStateException("해당 유저는 초대받지 않았습니다.")) })
+                .doOnNext { invitation ->
+                    if (!invitation.wantToAttend) {
+                        throw IllegalStateException("해당 유저는 참석자가 아닙니다.")
+                    }
+                    invitation.attended = request.attend
+                }.flatMap {
+                    invitationRepository.save(it).flatMap {
+                        Mono.just(meeting)
+                    }
+                }
+        }
+
+    private fun mergeWithParticipants(meeting: Meeting): Mono<Meeting> =
+        invitationRepository.findByMeetingIdAndWantToAttend(meeting.id)
             .collectList()
             .flatMap { invitations ->
                 val participants = invitations.map { it.user }.toList()
                 meeting.participants = participants
 
                 Mono.just(meeting)
+            }
+
+    private fun isUserInvited(meeting: Meeting, user: User): Mono<Boolean> =
+        invitationRepository.findByMeetingId(meeting.id)
+            .collectList()
+            .flatMap { invitations ->
+                val invitees = invitations.map { it.user }.toList()
+                Mono.just(invitees.contains(user))
             }
 }

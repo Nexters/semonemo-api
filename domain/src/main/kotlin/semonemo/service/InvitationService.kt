@@ -23,6 +23,10 @@ class InvitationService(
         meetingRepository.findById(request.meetingId)
             .switchIfEmpty(Mono.defer { Mono.error(IllegalArgumentException("존재하지 않는 모임입니다.")) })
             .flatMap { meeting ->
+                if (meeting.isStarted) {
+                    return@flatMap Mono.defer { Mono.error(IllegalStateException("이미 시작한 모임입니다.")) }
+                }
+
                 invitationRepository.findByMeetingIdAndUserId(meeting.id, guest.id!!)
                     .flatMap<Invitation?> { Mono.defer { Mono.error(IllegalArgumentException("이미 초대된 모임입니다.")) } }
                     .switchIfEmpty(countersRepository.findById("invitationId")
