@@ -3,8 +3,8 @@ POST {{host}}/api/meetings
 Content-Type: application/json
 
 {
-  "startDate": "2425-08-05T22:57:00",
-  "endDate": "2425-08-05T22:57:01",
+  "startDate": "2022-08-07T18:40:00",
+  "endDate": "2022-08-07T18:46:01",
   "place": {
     "summary": "상록이집",
     "address": "상록이집주소",
@@ -50,15 +50,23 @@ Content-Type: application/json
 GET {{host}}/api/meetings
 
 ### 모임 상세 조회
-GET {{host}}/api/meetings/123
+GET {{host}}/api/meetings/126
 
 ### 모임 제거
 DELETE {{host}}/api/meetings/100
 
 ### 갈게요/못가요
-PUT {{host}}/api/meetings/123/attendance
+PUT {{host}}/api/meetings/129/attendance
 Content-Type: application/json
 
 {
   "wantToAttend": true
+}
+
+### 출석/결석 처리
+PUT {{host}}/api/meetings/129/users/52/attendance
+Content-Type: application/json
+
+{
+  "attend": true
 }

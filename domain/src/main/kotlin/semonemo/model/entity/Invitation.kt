@@ -24,7 +24,6 @@ class Invitation(
     var wantToAttend = wantToAttend
 
     var attended = attended
-        private set
 
     companion object {
         fun host(id: Long, meeting: Meeting, host: User): Invitation =
