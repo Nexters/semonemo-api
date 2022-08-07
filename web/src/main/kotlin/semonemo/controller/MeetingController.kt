@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.server.WebSession
 import reactor.core.publisher.Mono
 import semonemo.config.LoginUserArgumentResolver
+import semonemo.model.dto.AttendanceUpdateRequest
 import semonemo.model.dto.MeetingGetResponse
 import semonemo.model.dto.MeetingRemoveResponse
 import semonemo.model.dto.MeetingSaveRequest
@@ -92,17 +93,55 @@ class MeetingController(
     fun updateWantToAttend(
         session: WebSession,
         @PathVariable id: Long,
-        @RequestBody wantToAttendRequest: WantToAttendRequest
+        @RequestBody request: WantToAttendRequest
     ): Mono<ResponseEntity<MeetingSaveResponse>> {
         val user = session.attributes[LoginUserArgumentResolver.LOGIN_ATTRIBUTE_NAME] as User?
             ?: return Mono.defer { Mono.just(ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null)) }
 
-        return meetingService.updateWantToAttend(id, user, wantToAttendRequest)
+        return meetingService.updateWantToAttend(id, user, request)
             .flatMap { Mono.just(ResponseEntity.ok(MeetingSaveResponse.success(it))) }
             .onErrorResume {
-                Mono.just(
-                    ResponseEntity.status(HttpStatus.BAD_REQUEST).body(MeetingSaveResponse.fail(it.message))
-                )
+                when (it) {
+                    is java.lang.IllegalStateException -> Mono.just(
+                        ResponseEntity.status(HttpStatus.BAD_REQUEST).body(MeetingSaveResponse.fail(it.message))
+                    )
+                    is java.lang.IllegalArgumentException -> Mono.just(
+                        ResponseEntity.status(HttpStatus.NOT_FOUND).body(MeetingSaveResponse.fail(it.message))
+                    )
+                    else -> Mono.just(
+                        ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null)
+                    )
+                }
+            }
+    }
+
+    @PutMapping("/api/meetings/{meetingId}/users/{userId}/attendance")
+    fun updateAttendance(
+        session: WebSession,
+        @PathVariable meetingId: Long,
+        @PathVariable userId: Long,
+        @RequestBody request: AttendanceUpdateRequest
+    ): Mono<ResponseEntity<MeetingSaveResponse>> {
+        val loginUser = session.attributes[LoginUserArgumentResolver.LOGIN_ATTRIBUTE_NAME] as User?
+            ?: return Mono.defer { Mono.just(ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null)) }
+
+        return meetingService.updateAttendance(loginUser, meetingId, userId, request)
+            .flatMap { Mono.just(ResponseEntity.ok(MeetingSaveResponse.success(it))) }
+            .onErrorResume {
+                when (it) {
+                    is java.lang.IllegalStateException -> Mono.just(
+                        ResponseEntity.status(HttpStatus.BAD_REQUEST).body(MeetingSaveResponse.fail(it.message))
+                    )
+                    is java.lang.IllegalArgumentException -> Mono.just(
+                        ResponseEntity.status(HttpStatus.NOT_FOUND).body(MeetingSaveResponse.fail(it.message))
+                    )
+                    is ForbiddenException -> Mono.just(
+                        ResponseEntity.status(HttpStatus.FORBIDDEN).body(MeetingSaveResponse.fail(it.message))
+                    )
+                    else -> Mono.just(
+                        ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null)
+                    )
+                }
             }
     }
 }
