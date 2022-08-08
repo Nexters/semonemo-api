@@ -8,3 +8,6 @@ Content-Type: application/json
 
 ### 유저 로그아웃
 POST {{host}}/api/logout
+
+### 내 정보 조회
+GET {{host}}/api/my-info

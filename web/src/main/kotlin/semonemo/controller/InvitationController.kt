@@ -26,7 +26,12 @@ class InvitationController(
         session: WebSession
     ): Mono<ResponseEntity<SemonemoResponse>> {
         val user = session.attributes[LoginUserArgumentResolver.LOGIN_ATTRIBUTE_NAME] as User?
-            ?: return Mono.defer { Mono.just(ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null)) }
+            ?: return Mono.defer {
+                Mono.just(
+                    ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(SemonemoResponse(statusCode = 401, message = "로그인이 필요합니다."))
+                )
+            }
 
         return invitationService.saveInvitation(user, request)
             .flatMap { Mono.just(ResponseEntity.ok(SemonemoResponse(data = InvitationSaveResponse.of(it)))) }
