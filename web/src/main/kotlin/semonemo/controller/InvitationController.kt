@@ -11,6 +11,7 @@ import reactor.core.publisher.Mono
 import semonemo.config.LoginUserArgumentResolver
 import semonemo.model.dto.InvitationSaveRequest
 import semonemo.model.dto.InvitationSaveResponse
+import semonemo.model.dto.SemonemoResponse
 import semonemo.model.entity.User
 import semonemo.service.InvitationService
 
@@ -23,15 +24,16 @@ class InvitationController(
     fun createInvitation(
         @RequestBody request: InvitationSaveRequest,
         session: WebSession
-    ): Mono<ResponseEntity<InvitationSaveResponse>> {
+    ): Mono<ResponseEntity<SemonemoResponse>> {
         val user = session.attributes[LoginUserArgumentResolver.LOGIN_ATTRIBUTE_NAME] as User?
             ?: return Mono.defer { Mono.just(ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null)) }
 
         return invitationService.saveInvitation(user, request)
-            .flatMap { Mono.just(ResponseEntity.ok(InvitationSaveResponse.success(it))) }
+            .flatMap { Mono.just(ResponseEntity.ok(SemonemoResponse(data = InvitationSaveResponse.of(it)))) }
             .onErrorResume {
                 Mono.just(
-                    ResponseEntity.status(HttpStatus.BAD_REQUEST).body(InvitationSaveResponse.fail(it.message))
+                    ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(SemonemoResponse(statusCode = 400, message = it.message))
                 )
             }
     }

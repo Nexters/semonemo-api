@@ -14,6 +14,6 @@ class UserService(
     @Transactional(readOnly = true)
     fun findUserByAuthKey(authKey: String): Mono<User> {
         return userRepository.findUserByAuthKey(authKey)
-            .switchIfEmpty(Mono.defer { Mono.error(IllegalArgumentException("존재하지 않는 인증키 입니다. (authKey: $authKey)")) })
+            .switchIfEmpty(Mono.defer { Mono.error(IllegalArgumentException("존재하지 않는 인증키 입니다.")) })
     }
 }
