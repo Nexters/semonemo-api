@@ -56,6 +56,9 @@ class Meeting(
             return startDate.isBefore(now) && endDate.isAfter(now)
         }
 
+    val isEnd: Boolean
+        get() = endDate.isBefore(LocalDateTime.now())
+
     fun remove() {
         status = MeetingStatus.REMOVED
     }
