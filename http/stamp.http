@@ -1,0 +1,2 @@
+### 새로운 스탬프 조회
+GET {{host}}/api/stamps/new
