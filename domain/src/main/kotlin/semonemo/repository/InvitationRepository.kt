@@ -16,4 +16,7 @@ interface InvitationRepository : ReactiveCrudRepository<Invitation, Long> {
 
     @Query("{'meeting._id' : ?0, 'user._id' : ?1}")
     fun findByMeetingIdAndUserId(meetingId: Long, userId: Long): Mono<Invitation>
+
+    @Query("{'attended' : ?0, 'stamped' : ?1}")
+    fun findByAttendedAndStamped(attended: Boolean, stamped: Boolean): Flux<Invitation>
 }

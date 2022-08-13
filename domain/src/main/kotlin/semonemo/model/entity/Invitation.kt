@@ -10,6 +10,7 @@ class Invitation(
     user: User,
     wantToAttend: Boolean = false,
     attended: Boolean = false,
+    stamped: Boolean = false,
 ) : AuditableDocument() {
 
     @Id
@@ -24,6 +25,11 @@ class Invitation(
     var wantToAttend = wantToAttend
 
     var attended = attended
+
+    var stamped = stamped
+
+    val isMeetingEnd: Boolean
+        get() = meeting.isEnd
 
     companion object {
         fun host(id: Long, meeting: Meeting, host: User): Invitation =
