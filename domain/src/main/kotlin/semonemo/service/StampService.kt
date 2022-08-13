@@ -41,6 +41,10 @@ class StampService(
             }
     }
 
+    @Transactional(readOnly = true)
+    fun findStamps(user: User): Flux<Stamp> = stampRepository.findByUser(userId = user.id!!)
+        .sort(Comparator.comparingLong<Stamp?> { it.id }.reversed())
+
     @Transactional
     fun findNewStamps(user: User): Flux<Stamp> =
         stampRepository.findByUserAndConfirmed(userId = user.id!!, confirmed = false)
@@ -48,5 +52,5 @@ class StampService(
                 stamp.confirmed = true
                 stampRepository.save(stamp)
                     .flatMap { Mono.just(it) }
-            }
+            }.sort(Comparator.comparingLong { it.id })
 }

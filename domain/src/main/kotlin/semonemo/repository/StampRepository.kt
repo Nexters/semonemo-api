@@ -7,6 +7,9 @@ import semonemo.model.entity.Stamp
 
 interface StampRepository : ReactiveCrudRepository<Stamp, Long> {
 
+    @Query("{'invitation.user._id' : ?0}")
+    fun findByUser(userId: Long): Flux<Stamp>
+
     @Query("{'invitation.user._id' : ?0, 'confirmed' : ?1}")
     fun findByUserAndConfirmed(userId: Long, confirmed: Boolean): Flux<Stamp>
 }

@@ -17,6 +17,21 @@ class StampController(
     private val stampService: StampService
 ) {
 
+    @GetMapping("/api/stamps")
+    fun getStamps(session: WebSession): Mono<ResponseEntity<SemonemoResponse>> {
+        val user = session.attributes[LoginUserArgumentResolver.LOGIN_ATTRIBUTE_NAME] as User?
+            ?: return Mono.defer {
+                Mono.just(
+                    ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(SemonemoResponse(statusCode = 401, message = "로그인이 필요합니다."))
+                )
+            }
+
+        return stampService.findStamps(user)
+            .collectList()
+            .flatMap { Mono.just(ResponseEntity.ok(SemonemoResponse(data = StampGetResponse.listOf(user, it)))) }
+    }
+
     @GetMapping("/api/stamps/new")
     fun getNewStamps(session: WebSession): Mono<ResponseEntity<SemonemoResponse>> {
         val user = session.attributes[LoginUserArgumentResolver.LOGIN_ATTRIBUTE_NAME] as User?
