@@ -11,7 +11,7 @@ data class StampGetResponse(
     companion object {
         fun listOf(user: User, stamps: List<Stamp>): List<StampGetResponse> = stamps.map { of(user, it) }
 
-        private fun of(user: User, stamp: Stamp) =
+        fun of(user: User, stamp: Stamp) =
             StampGetResponse(stamp.id, MeetingGetResponse.of(stamp.invitation.meeting, user))
     }
 }

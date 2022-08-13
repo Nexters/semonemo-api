@@ -1,5 +1,8 @@
 ### 스탬프 목록 조회
 GET {{host}}/api/stamps
 
+### 스탬프 상세 조회
+GET {{host}}/api/stamps/103
+
 ### 새로운 스탬프 조회
 GET {{host}}/api/stamps/new
