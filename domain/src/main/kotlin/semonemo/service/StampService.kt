@@ -5,6 +5,7 @@ import org.springframework.transaction.annotation.Transactional
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import semonemo.model.entity.Stamp
+import semonemo.model.entity.User
 import semonemo.repository.CountersRepository
 import semonemo.repository.InvitationRepository
 import semonemo.repository.StampRepository
@@ -39,4 +40,13 @@ class StampService(
                     }
             }
     }
+
+    @Transactional
+    fun findNewStamps(user: User): Flux<Stamp> =
+        stampRepository.findByUserAndConfirmed(userId = user.id!!, confirmed = false)
+            .flatMap { stamp ->
+                stamp.confirmed = true
+                stampRepository.save(stamp)
+                    .flatMap { Mono.just(it) }
+            }
 }
