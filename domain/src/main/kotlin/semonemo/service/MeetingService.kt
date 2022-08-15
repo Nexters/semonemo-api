@@ -11,6 +11,7 @@ import semonemo.model.entity.Invitation
 import semonemo.model.entity.Meeting
 import semonemo.model.entity.User
 import semonemo.model.exception.ForbiddenException
+import semonemo.repository.BlacklistRepository
 import semonemo.repository.MeetingRepository
 import semonemo.repository.CountersRepository
 import semonemo.repository.InvitationRepository
@@ -21,6 +22,7 @@ class MeetingService(
     private val meetingRepository: MeetingRepository,
     private val invitationRepository: InvitationRepository,
     private val countersRepository: CountersRepository,
+    private val blacklistRepository: BlacklistRepository,
 ) {
 
     @Transactional
@@ -52,6 +54,7 @@ class MeetingService(
             meetingRepository.findAllByStatusAndEndDateBeforeOrderByStartDate(endDate = now),
         ).concatMap { mergeWithParticipants(it) }
             .filterWhen { isUserInvited(it, user) }
+            .flatMap { findMeetingsFilterWithBlacklist(Flux.just(it), user) }
 
     // TODO: 초대받지 않은 모임은 조회 권한이 없어야 함
     @Transactional(readOnly = true)
@@ -143,4 +146,9 @@ class MeetingService(
                 val invitees = invitations.map { it.user }.toList()
                 Mono.just(invitees.contains(user))
             }
+
+    private fun findMeetingsFilterWithBlacklist(meetings: Flux<Meeting>, user: User): Flux<Meeting> =
+        blacklistRepository.findByUserId(user.id!!)
+            .map { blacklist -> blacklist.meetingId }
+            .flatMap { blacklistMeetingId -> meetings.filter { meeting -> meeting.id != blacklistMeetingId } }
 }
