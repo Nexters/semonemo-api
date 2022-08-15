@@ -31,7 +31,10 @@ class BlacklistService(
             }.switchIfEmpty(countersRepository.findById("blacklistId")
                 .flatMap { counter ->
                     counter.increaseSeq()
-                    countersRepository.save(counter)
-                    blacklistRepository.save(Blacklist(counter.seq, user, request.meetingId, request.content))
+
+                    Mono.zip(
+                        countersRepository.save(counter),
+                        blacklistRepository.save(Blacklist(counter.seq, user, request.meetingId, request.content))
+                    ).flatMap { tuple -> Mono.just(tuple.t2) }
                 })
 }
