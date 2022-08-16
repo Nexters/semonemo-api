@@ -21,8 +21,8 @@ class StampService(
     @Transactional
     fun createStamp(): Flux<Stamp> {
         return invitationRepository.findByAttendedAndStamped(attended = true, stamped = false)
-            .take(1L) // TODO: 1개씩 저장하지 않으면, 여러 개의 이벤트가 비동기로 실행돼서 정확히 저장되지 않음(stampId에 lock이 안 걸려서 값이 중복되는 경우가 생겨서 그런 것 같음)
             .filter { it.isMeetingEnd }
+            .take(1L) // TODO: 1개씩 처리하지 않으면, 여러 개의 이벤트가 비동기로 실행돼서 정확히 저장되지 않음(stampId에 lock이 안 걸려서 값이 중복되는 경우가 생겨서 그런 것 같음)
             .flatMap { invitation ->
                 countersRepository.findById("stampId")
                     .flatMap { stampCounter ->
