@@ -137,7 +137,16 @@ class MeetingService(
         invitationRepository.findByMeetingIdAndWantToAttend(meeting.id)
             .collectList()
             .flatMap { invitations ->
-                val participants = invitations.map { it.user }.toList()
+                val participants = invitations.map {
+                    val user = User(
+                        nickname = it.user.nickname,
+                        group = it.user.group,
+                        profileImageUrl = it.user.profileImageUrl,
+                    )
+                    user.id = it.user.id
+                    user.attended = it.attended
+                    user
+                }.toList()
                 meeting.participants = participants
 
                 Mono.just(meeting)
@@ -156,8 +165,6 @@ class MeetingService(
             .map { blacklist -> blacklist.meetingId }
             .collectList()
             .flatMap { blacklistMeetingIds ->
-                println(blacklistMeetingIds)
-
                 val filtered = meetings.filter { meeting -> !blacklistMeetingIds.contains(meeting.id) }
                 Mono.just(filtered)
             }
