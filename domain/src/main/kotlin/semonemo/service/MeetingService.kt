@@ -54,13 +54,17 @@ class MeetingService(
             meetingRepository.findAllByStatusAndEndDateBeforeOrderByStartDate(endDate = now),
         ).concatMap { mergeWithParticipants(it) }
             .filterWhen { isUserInvited(it, user) }
-            .flatMap { findMeetingsFilterWithBlacklist(Flux.just(it), user) }
+            .collectList()
+            .flatMap { findMeetingsFilterWithBlacklist(it, user) }
+            .flatMapIterable { it }
 
     // TODO: 초대받지 않은 모임은 조회 권한이 없어야 함
     @Transactional(readOnly = true)
-    fun findMeeting(id: Long): Mono<Meeting> =
+    fun findMeeting(id: Long, user: User): Mono<Meeting> =
         meetingRepository.findById(id)
             .flatMap { mergeWithParticipants(it) }
+            .filterWhen { isNotBlacklistMeeting(it, user) }
+            .switchIfEmpty(Mono.defer { Mono.error(IllegalArgumentException("신고된 모임입니다.")) })
 
     @Transactional
     fun removeMeeting(user: User, id: Long): Mono<Meeting> = meetingRepository.findById(id)
@@ -133,7 +137,16 @@ class MeetingService(
         invitationRepository.findByMeetingIdAndWantToAttend(meeting.id)
             .collectList()
             .flatMap { invitations ->
-                val participants = invitations.map { it.user }.toList()
+                val participants = invitations.map {
+                    val user = User(
+                        nickname = it.user.nickname,
+                        group = it.user.group,
+                        profileImageUrl = it.user.profileImageUrl,
+                    )
+                    user.id = it.user.id
+                    user.attended = it.attended
+                    user
+                }.toList()
                 meeting.participants = participants
 
                 Mono.just(meeting)
@@ -147,8 +160,18 @@ class MeetingService(
                 Mono.just(invitees.contains(user))
             }
 
-    private fun findMeetingsFilterWithBlacklist(meetings: Flux<Meeting>, user: User): Flux<Meeting> =
+    private fun findMeetingsFilterWithBlacklist(meetings: List<Meeting>, user: User): Mono<List<Meeting>> =
         blacklistRepository.findByUserId(user.id!!)
             .map { blacklist -> blacklist.meetingId }
-            .flatMap { blacklistMeetingId -> meetings.filter { meeting -> meeting.id != blacklistMeetingId } }
+            .collectList()
+            .flatMap { blacklistMeetingIds ->
+                val filtered = meetings.filter { meeting -> !blacklistMeetingIds.contains(meeting.id) }
+                Mono.just(filtered)
+            }
+
+    private fun isNotBlacklistMeeting(meeting: Meeting, user: User): Mono<Boolean> =
+        blacklistRepository.findByUserId(user.id!!)
+            .map { blacklist -> blacklist.meetingId }
+            .collectList()
+            .flatMap { blacklistIds -> Mono.just(!blacklistIds.contains(meeting.id)) }
 }

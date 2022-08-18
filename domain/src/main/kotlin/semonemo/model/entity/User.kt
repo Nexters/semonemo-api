@@ -8,6 +8,7 @@ import java.io.Serializable
 class User(
     nickname: String,
     group: String?,
+    profileImageUrl: String? = null,
 ) : AuditableDocument(), Serializable {
 
     @Id
@@ -22,6 +23,11 @@ class User(
 
     var group = group
         private set
+
+    var profileImageUrl = profileImageUrl
+        private set
+
+    var attended: Boolean? = null
 
     companion object {
         const val serialVersionUID: Long = 23894278394214L

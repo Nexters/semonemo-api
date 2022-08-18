@@ -79,8 +79,14 @@ class MeetingController(
                 )
             }
 
-        return meetingService.findMeeting(id)
+        return meetingService.findMeeting(id, user)
             .flatMap { Mono.just(ResponseEntity.ok(SemonemoResponse(data = MeetingGetResponse.of(it, user)))) }
+            .onErrorResume {
+                Mono.just(
+                    ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(SemonemoResponse(statusCode = 400, message = it.message))
+                )
+            }
     }
 
     @DeleteMapping("/api/meetings/{id}")

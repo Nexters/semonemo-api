@@ -28,17 +28,24 @@ data class MeetingGetResponse(
             meeting: Meeting,
             user: User,
             now: LocalDateTime = LocalDateTime.now()
-        ): MeetingGetResponse =
-            MeetingGetResponse(
+        ): MeetingGetResponse {
+            val isLoginUserParticipant = meeting.participants.map { it.id }
+                .contains(user.id)
+
+            return MeetingGetResponse(
                 id = meeting.id,
                 startDate = meeting.startDate,
                 endDate = meeting.endDate,
                 place = PlaceGetResponse.of(meeting.place),
                 host = UserGetResponse.of(meeting.host),
-                loginUser = LoginUserInfoResponse(user.id == meeting.hostUserId, user.id == meeting.hostUserId),
+                loginUser = LoginUserInfoResponse(
+                    user.id == meeting.hostUserId,
+                    user.id == meeting.hostUserId || isLoginUserParticipant
+                ),
                 isEnd = meeting.endDate.isBefore(now),
                 participants = ParticipantGetResponse.listOf(meeting.participants)
 //                createdAt = meeting.createdAt,
             )
+        }
     }
 }
