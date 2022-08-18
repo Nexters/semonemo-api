@@ -57,5 +57,4 @@ class StampService(
                 stampRepository.save(stamp)
                     .flatMap { Mono.just(it) }
             }.sort(Comparator.comparingLong { it.id })
-
 }

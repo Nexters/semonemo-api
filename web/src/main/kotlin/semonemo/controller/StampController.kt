@@ -59,6 +59,11 @@ class StampController(
 
         return stampService.findNewStamps(user)
             .collectList()
-            .flatMap { Mono.just(ResponseEntity.ok(SemonemoResponse(data = StampGetResponse.listOf(user, it)))) }
+            .flatMap { newStamps ->
+                stampService.findStamps(user).count()
+                    .flatMap { totalStampCount ->
+                        Mono.just(ResponseEntity.ok(SemonemoResponse(data = StampGetResponse.listOf(user, newStamps, totalStampCount))))
+                    }
+            }
     }
 }
