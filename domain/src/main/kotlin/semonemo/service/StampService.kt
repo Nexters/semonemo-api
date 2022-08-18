@@ -43,7 +43,7 @@ class StampService(
 
     @Transactional(readOnly = true)
     fun findStamps(user: User): Flux<Stamp> = stampRepository.findByUser(userId = user.id!!)
-        .sort(Comparator.comparingLong<Stamp?> { it.id }.reversed())
+        .sort(Comparator.comparingLong { it.id })
 
     // TODO: 내꺼 아니면 조회 안되어야 함
     @Transactional(readOnly = true)
