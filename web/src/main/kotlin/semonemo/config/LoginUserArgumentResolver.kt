@@ -12,6 +12,11 @@ import reactor.core.publisher.Mono
 import semonemo.model.SemonemoResponse
 import semonemo.model.entity.User
 
+/**
+ * TODO
+ * 로그인 유저 정보를 session에서 받아오는 기능을 resolveArgument()에 구현해서 argument 형식으로 주입하려 했지만
+ * 정상적으로 동작하지 않아 임시로 companion 메소드로 구현해 사용
+ */
 @Component
 class LoginUserArgumentResolver : HandlerMethodArgumentResolver {
 
@@ -31,11 +36,6 @@ class LoginUserArgumentResolver : HandlerMethodArgumentResolver {
         return Mono.just(session.attributes[LOGIN_ATTRIBUTE_NAME]!!)
     }
 
-    /**
-     * TODO
-     * 로그인 유저 정보를 session에서 받아오는 기능을 resolveArgument()에 구현해서 argument 형식으로 주입하려 했지만
-     * 정상적으로 동작하지 않아 임시로 companion 메소드로 구현해 사용
-     */
     companion object {
         const val LOGIN_ATTRIBUTE_NAME = "LOGIN_USER"
 
