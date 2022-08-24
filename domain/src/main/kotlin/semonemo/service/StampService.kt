@@ -42,7 +42,7 @@ class StampService(
     }
 
     @Transactional(readOnly = true)
-    fun findStamps(user: User): Flux<Stamp> = stampRepository.findByUser(userId = user.id!!)
+    fun findStamps(user: User): Flux<Stamp> = stampRepository.findByUserId(userId = user.id!!)
         .sort(Comparator.comparingLong { it.id })
 
     // TODO: 내꺼 아니면 조회 안되어야 함
@@ -51,7 +51,7 @@ class StampService(
 
     @Transactional
     fun updateNewStamps(user: User): Flux<Stamp> =
-        stampRepository.findByUserAndConfirmed(userId = user.id!!, confirmed = false)
+        stampRepository.findByUserIdAndConfirmed(userId = user.id!!, confirmed = false)
             .flatMap { stamp ->
                 stamp.confirmed = true
                 stampRepository.save(stamp)
@@ -60,6 +60,6 @@ class StampService(
 
     @Transactional(readOnly = true)
     fun findNewStamps(user: User): Flux<Stamp> =
-        stampRepository.findByUserAndConfirmed(userId = user.id!!, confirmed = false)
+        stampRepository.findByUserIdAndConfirmed(userId = user.id!!, confirmed = false)
             .sort(Comparator.comparingLong { it.id })
 }

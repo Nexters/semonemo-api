@@ -134,7 +134,7 @@ class MeetingService(
         }
 
     private fun mergeWithParticipants(meeting: Meeting): Mono<Meeting> =
-        invitationRepository.findByMeetingIdAndWantToAttend(meeting.id)
+        invitationRepository.findByMeetingIdAndWantToAttend(meeting.id, true)
             .collectList()
             .flatMap { invitations ->
                 val participants = invitations.map {

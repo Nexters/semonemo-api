@@ -12,7 +12,7 @@ interface InvitationRepository : ReactiveCrudRepository<Invitation, Long> {
     fun findByMeetingId(meetingId: Long): Flux<Invitation>
 
     @Query("{'meeting._id' : ?0, 'wantToAttend' : ?1}")
-    fun findByMeetingIdAndWantToAttend(meetingId: Long, wantToAttend: Boolean = true): Flux<Invitation>
+    fun findByMeetingIdAndWantToAttend(meetingId: Long, wantToAttend: Boolean): Flux<Invitation>
 
     @Query("{'meeting._id' : ?0, 'user._id' : ?1}")
     fun findByMeetingIdAndUserId(meetingId: Long, userId: Long): Mono<Invitation>
