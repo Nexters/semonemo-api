@@ -14,7 +14,6 @@ data class MeetingGetResponse(
     val loginUser: LoginUserInfoResponse,
     val isEnd: Boolean,
     val participants: List<ParticipantGetResponse>,
-//    val createdAt: LocalDateTime?,
 ) {
 
     companion object {
@@ -45,7 +44,6 @@ data class MeetingGetResponse(
                 ),
                 isEnd = meeting.endDate.isBefore(now),
                 participants = ParticipantGetResponse.listOf(meeting.participants)
-//                createdAt = meeting.createdAt,
             )
         }
     }
