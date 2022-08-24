@@ -4,6 +4,10 @@ import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
 import java.io.Serializable
 
+/**
+ * 패키지 위치 바꾸게되면 deserialize 과정 중 이슈 발생하므로
+ * 패키지 위치 등 클래스 관련 정보 함부로 바꾸면 안됨
+ */
 @Document
 class User(
     nickname: String,
