@@ -12,14 +12,14 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.server.WebSession
 import reactor.core.publisher.Mono
-import semonemo.config.LoginUserArgumentResolver
+import semonemo.config.LoginUserArgumentResolver.Companion.findLoginUser
+import semonemo.config.LoginUserArgumentResolver.Companion.unauthorizedResponse
 import semonemo.model.invitation.AttendanceUpdateRequest
 import semonemo.model.meeting.MeetingGetResponse
 import semonemo.model.meeting.MeetingSaveRequest
 import semonemo.model.meeting.MeetingResponse
 import semonemo.model.SemonemoResponse
 import semonemo.model.invitation.WantToAttendRequest
-import semonemo.model.entity.User
 import semonemo.model.exception.ForbiddenException
 import semonemo.service.MeetingService
 import java.time.LocalDateTime
@@ -34,13 +34,7 @@ class MeetingController(
         @RequestBody request: MeetingSaveRequest,
         session: WebSession
     ): Mono<ResponseEntity<SemonemoResponse>> {
-        val user = session.attributes[LoginUserArgumentResolver.LOGIN_ATTRIBUTE_NAME] as User?
-            ?: return Mono.defer {
-                Mono.just(
-                    ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .body(SemonemoResponse(statusCode = 401, message = "로그인이 필요합니다."))
-                )
-            }
+        val user = findLoginUser(session) ?: return unauthorizedResponse()
 
         return meetingService.saveMeeting(user, request)
             .flatMap { Mono.just(ResponseEntity.ok(SemonemoResponse(data = MeetingResponse.of(it)))) }
@@ -54,14 +48,7 @@ class MeetingController(
 
     @GetMapping("/api/meetings")
     fun getMeetings(session: WebSession): Mono<ResponseEntity<SemonemoResponse>> {
-        val user = session.attributes[LoginUserArgumentResolver.LOGIN_ATTRIBUTE_NAME] as User?
-            ?: return Mono.defer {
-                Mono.just(
-                    ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .body(SemonemoResponse(statusCode = 401, message = "로그인이 필요합니다."))
-                )
-            }
-
+        val user = findLoginUser(session) ?: return unauthorizedResponse()
         val now = LocalDateTime.now()
 
         return meetingService.findMeetings(now, user)
@@ -71,13 +58,7 @@ class MeetingController(
 
     @GetMapping("/api/meetings/{id}")
     fun getMeetings(session: WebSession, @PathVariable id: Long): Mono<ResponseEntity<SemonemoResponse>> {
-        val user = session.attributes[LoginUserArgumentResolver.LOGIN_ATTRIBUTE_NAME] as User?
-            ?: return Mono.defer {
-                Mono.just(
-                    ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .body(SemonemoResponse(statusCode = 401, message = "로그인이 필요합니다."))
-                )
-            }
+        val user = findLoginUser(session) ?: return unauthorizedResponse()
 
         return meetingService.findMeeting(id, user)
             .flatMap { Mono.just(ResponseEntity.ok(SemonemoResponse(data = MeetingGetResponse.of(it, user)))) }
@@ -91,13 +72,7 @@ class MeetingController(
 
     @DeleteMapping("/api/meetings/{id}")
     fun removeMeeting(session: WebSession, @PathVariable id: Long): Mono<ResponseEntity<SemonemoResponse>> {
-        val user = session.attributes[LoginUserArgumentResolver.LOGIN_ATTRIBUTE_NAME] as User?
-            ?: return Mono.defer {
-                Mono.just(
-                    ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .body(SemonemoResponse(statusCode = 401, message = "로그인이 필요합니다."))
-                )
-            }
+        val user = findLoginUser(session) ?: return unauthorizedResponse()
 
         return meetingService.removeMeeting(user, id)
             .flatMap { Mono.just(ResponseEntity.ok(SemonemoResponse(data = MeetingResponse.of(it)))) }
@@ -124,13 +99,7 @@ class MeetingController(
         @PathVariable id: Long,
         @RequestBody request: WantToAttendRequest
     ): Mono<ResponseEntity<SemonemoResponse>> {
-        val user = session.attributes[LoginUserArgumentResolver.LOGIN_ATTRIBUTE_NAME] as User?
-            ?: return Mono.defer {
-                Mono.just(
-                    ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .body(SemonemoResponse(statusCode = 401, message = "로그인이 필요합니다."))
-                )
-            }
+        val user = findLoginUser(session) ?: return unauthorizedResponse()
 
         return meetingService.updateWantToAttend(id, user, request)
             .flatMap { Mono.just(ResponseEntity.ok(SemonemoResponse(data = MeetingResponse.of(it)))) }
@@ -158,13 +127,7 @@ class MeetingController(
         @PathVariable userId: Long,
         @RequestBody request: AttendanceUpdateRequest
     ): Mono<ResponseEntity<SemonemoResponse>> {
-        val loginUser = session.attributes[LoginUserArgumentResolver.LOGIN_ATTRIBUTE_NAME] as User?
-            ?: return Mono.defer {
-                Mono.just(
-                    ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .body(SemonemoResponse(statusCode = 401, message = "로그인이 필요합니다."))
-                )
-            }
+        val loginUser = findLoginUser(session) ?: return unauthorizedResponse()
 
         return meetingService.updateAttendance(loginUser, meetingId, userId, request)
             .flatMap { Mono.just(ResponseEntity.ok(SemonemoResponse(data = MeetingResponse.of(it)))) }
