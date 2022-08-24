@@ -7,10 +7,10 @@ import java.time.LocalDateTime
 
 abstract class AuditableDocument(
     @CreatedDate
-    var createdAt: LocalDateTime? = null,
+    var createdAt: LocalDateTime = LocalDateTime.now(),
 
     @LastModifiedDate
-    var updatedAt: LocalDateTime? = null,
+    var updatedAt: LocalDateTime? = LocalDateTime.now(),
 ) : Serializable {
 
     companion object {
