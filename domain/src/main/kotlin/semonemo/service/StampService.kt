@@ -45,7 +45,7 @@ class StampService(
     fun findStamps(user: User): Flux<Stamp> = stampRepository.findByUserId(userId = user.id!!)
         .sort(Comparator.comparingLong { it.id })
 
-    // TODO: 내꺼 아니면 조회 안되어야 함
+    // TODO: 내 스탬프가 아니면 조회 안되어야 함
     @Transactional(readOnly = true)
     fun findStamp(id: Long): Mono<Stamp> = stampRepository.findById(id)
 

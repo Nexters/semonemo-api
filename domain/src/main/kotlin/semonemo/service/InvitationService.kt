@@ -17,7 +17,6 @@ class InvitationService(
     private val countersRepository: CountersRepository,
 ) {
 
-    // TODO: 리팩토링 필요. 웹플럭스 어려웡
     @Transactional
     fun saveInvitation(guest: User, request: InvitationSaveRequest): Mono<Invitation> =
         meetingRepository.findById(request.meetingId)
