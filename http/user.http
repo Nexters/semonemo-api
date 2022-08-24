@@ -3,7 +3,7 @@ POST {{host}}/api/login
 Content-Type: application/json
 
 {
-  "authKey": "64d6a1e5"
+  "authKey": "926c7e69"
 }
 
 ### 유저 로그아웃
