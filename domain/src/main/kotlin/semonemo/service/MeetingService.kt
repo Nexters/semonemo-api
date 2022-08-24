@@ -34,8 +34,8 @@ class MeetingService(
                 val invitationCounter = tuple.t2
                 val meeting = request.toMeeting(meetingCounter.seq, host)
 
-                meetingCounter.increaseSeq()
-                invitationCounter.increaseSeq()
+                meetingCounter.increaseSeqOne()
+                invitationCounter.increaseSeqOne()
 
                 Mono.zip(
                     countersRepository.save(meetingCounter),

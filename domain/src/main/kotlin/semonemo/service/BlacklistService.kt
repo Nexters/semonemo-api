@@ -30,7 +30,7 @@ class BlacklistService(
                     .flatMap<Blacklist?> { Mono.defer { Mono.error(IllegalArgumentException("이미 신고된 모임입니다.")) } }
             }.switchIfEmpty(countersRepository.findById("blacklistId")
                 .flatMap { counter ->
-                    counter.increaseSeq()
+                    counter.increaseSeqOne()
 
                     Mono.zip(
                         countersRepository.save(counter),

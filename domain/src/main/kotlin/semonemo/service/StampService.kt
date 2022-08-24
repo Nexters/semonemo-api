@@ -26,7 +26,7 @@ class StampService(
             .flatMap { invitation ->
                 countersRepository.findById("stampId")
                     .flatMap { stampCounter ->
-                        stampCounter.increaseSeq()
+                        stampCounter.increaseSeqOne()
                         invitation.stamped = true
 
                         Mono.zip(

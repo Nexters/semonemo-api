@@ -3,30 +3,16 @@ package semonemo.model.entity
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
 
-@Document
+@Document("invitation")
 class Invitation(
-    id: Long,
-    meeting: Meeting,
-    user: User,
-    wantToAttend: Boolean = false,
-    attended: Boolean = false,
-    stamped: Boolean = false,
-) : AuditableDocument() {
-
     @Id
-    var id = id
-
-    var meeting = meeting
-        private set
-
-    var user = user
-        private set
-
-    var wantToAttend = wantToAttend
-
-    var attended = attended
-
-    var stamped = stamped
+    var id: Long,
+    val meeting: Meeting,
+    val user: User,
+    var wantToAttend: Boolean = false,
+    var attended: Boolean = false,
+    var stamped: Boolean = false,
+) : AuditableDocument() {
 
     val isMeetingEnd: Boolean
         get() = meeting.isEnd

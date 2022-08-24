@@ -6,37 +6,25 @@ import org.springframework.data.mongodb.core.mapping.Document
 import org.springframework.format.annotation.DateTimeFormat
 import java.time.LocalDateTime
 
-@Document
+@Document("meeting")
 class Meeting(
-    id: Long,
-    host: User,
-    place: Place,
-    startDate: LocalDateTime,
-    endDate: LocalDateTime,
+    @Id
+    var id: Long,
+    val host: User,
+    val place: Place,
+
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    val startDate: LocalDateTime,
+
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    val endDate: LocalDateTime,
+
+    private var status: MeetingStatus = MeetingStatus.ACTIVE
 ) : AuditableDocument() {
 
     init {
         validateDate(startDate, endDate)
     }
-
-    @Id
-    var id = id
-
-    var host = host
-        private set
-
-    var place = place
-        private set
-
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    var startDate = startDate
-        private set
-
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    var endDate = endDate
-        private set
-
-    var status: MeetingStatus = MeetingStatus.ACTIVE
 
     @Transient
     val hostUserId = host.id
@@ -63,9 +51,8 @@ class Meeting(
         status = MeetingStatus.REMOVED
     }
 
-    private fun validateDate(startDate: LocalDateTime, endDate: LocalDateTime) {
+    private fun validateDate(startDate: LocalDateTime, endDate: LocalDateTime) =
         require(startDate.isBefore(endDate)) { "시작 날짜는 종료 날짜보다 이전이어야 합니다." }
-    }
 
     companion object {
         const val serialVersionUID: Long = -68923944814214L

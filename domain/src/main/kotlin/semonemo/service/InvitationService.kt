@@ -31,7 +31,7 @@ class InvitationService(
                     .flatMap<Invitation?> { Mono.defer { Mono.error(IllegalArgumentException("이미 초대된 모임입니다.")) } }
                     .switchIfEmpty(countersRepository.findById("invitationId")
                         .flatMap { counter ->
-                            counter.increaseSeq()
+                            counter.increaseSeqOne()
 
                             Mono.zip(
                                 countersRepository.save(counter),
