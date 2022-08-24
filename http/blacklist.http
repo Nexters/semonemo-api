@@ -1,0 +1,8 @@
+### 신고/차단 API
+POST {{host}}/api/blacklist
+Content-Type: application/json
+
+{
+  "meetingId": 402,
+  "content": "욕설이 있어요."
+}

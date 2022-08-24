@@ -10,6 +10,8 @@ import reactor.core.publisher.Mono
 import semonemo.config.LoginUserArgumentResolver.Companion.findLoginUser
 import semonemo.config.LoginUserArgumentResolver.Companion.unauthorizedResponse
 import semonemo.model.SemonemoResponse
+import semonemo.model.entity.User
+import semonemo.model.stamp.Stamp
 import semonemo.model.stamp.StampGetResponse
 import semonemo.service.StampService
 
@@ -41,12 +43,7 @@ class StampController(
 
         return stampService.updateNewStamps(user)
             .collectList()
-            .flatMap { newStamps ->
-                stampService.findStamps(user).count()
-                    .flatMap { totalStampCount ->
-                        Mono.just(ResponseEntity.ok(SemonemoResponse(data = StampGetResponse.listOf(user, newStamps, totalStampCount))))
-                    }
-            }
+            .flatMap { generateResponseWithOrder(user, it) }
     }
 
     @GetMapping("/api/stamps/new")
@@ -55,11 +52,12 @@ class StampController(
 
         return stampService.findNewStamps(user)
             .collectList()
-            .flatMap { newStamps ->
-                stampService.findStamps(user).count()
-                    .flatMap { totalStampCount ->
-                        Mono.just(ResponseEntity.ok(SemonemoResponse(data = StampGetResponse.listOf(user, newStamps, totalStampCount))))
-                    }
-            }
+            .flatMap { generateResponseWithOrder(user, it) }
     }
+
+    private fun generateResponseWithOrder(user: User, newStamps: List<Stamp>): Mono<ResponseEntity<SemonemoResponse>> =
+        stampService.findStamps(user).count()
+            .flatMap { totalStampCount ->
+                Mono.just(ResponseEntity.ok(SemonemoResponse(data = StampGetResponse.listOf(user = user, newStamps = newStamps, totalStampCount = totalStampCount))))
+            }
 }

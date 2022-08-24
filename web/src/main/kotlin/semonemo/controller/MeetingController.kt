@@ -38,12 +38,7 @@ class MeetingController(
 
         return meetingService.saveMeeting(user, request)
             .flatMap { Mono.just(ResponseEntity.ok(SemonemoResponse(data = MeetingResponse.of(it)))) }
-            .onErrorResume {
-                Mono.just(
-                    ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body(SemonemoResponse(statusCode = 400, message = it.message))
-                )
-            }
+            .onErrorResume { generateErrorResponse(it) }
     }
 
     @GetMapping("/api/meetings")
@@ -53,7 +48,7 @@ class MeetingController(
 
         return meetingService.findMeetings(now, user)
             .collectList()
-            .flatMap { Mono.just(ResponseEntity.ok(SemonemoResponse(data = MeetingGetResponse.listOf(it, user, now)))) }
+            .flatMap { Mono.just(ResponseEntity.ok(SemonemoResponse(data = MeetingGetResponse.listOf(meetings = it, user = user, now = now)))) }
     }
 
     @GetMapping("/api/meetings/{id}")
@@ -62,12 +57,7 @@ class MeetingController(
 
         return meetingService.findMeeting(id, user)
             .flatMap { Mono.just(ResponseEntity.ok(SemonemoResponse(data = MeetingGetResponse.of(it, user)))) }
-            .onErrorResume {
-                Mono.just(
-                    ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body(SemonemoResponse(statusCode = 400, message = it.message))
-                )
-            }
+            .onErrorResume { generateErrorResponse(it) }
     }
 
     @DeleteMapping("/api/meetings/{id}")
@@ -76,21 +66,7 @@ class MeetingController(
 
         return meetingService.removeMeeting(user, id)
             .flatMap { Mono.just(ResponseEntity.ok(SemonemoResponse(data = MeetingResponse.of(it)))) }
-            .onErrorResume {
-                when (it) {
-                    is java.lang.IllegalArgumentException -> Mono.just(
-                        ResponseEntity.status(HttpStatus.NOT_FOUND)
-                            .body(SemonemoResponse(statusCode = 404, message = it.message))
-                    )
-                    is ForbiddenException -> Mono.just(
-                        ResponseEntity.status(HttpStatus.FORBIDDEN)
-                            .body(SemonemoResponse(statusCode = 403, message = it.message))
-                    )
-                    else -> Mono.just(
-                        ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(SemonemoResponse(statusCode = 500))
-                    )
-                }
-            }
+            .onErrorResume { generateErrorResponse(it) }
     }
 
     @PutMapping("/api/meetings/{id}/attendance")
@@ -103,21 +79,7 @@ class MeetingController(
 
         return meetingService.updateWantToAttend(id, user, request)
             .flatMap { Mono.just(ResponseEntity.ok(SemonemoResponse(data = MeetingResponse.of(it)))) }
-            .onErrorResume {
-                when (it) {
-                    is java.lang.IllegalStateException -> Mono.just(
-                        ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                            .body(SemonemoResponse(statusCode = 400, message = it.message))
-                    )
-                    is java.lang.IllegalArgumentException -> Mono.just(
-                        ResponseEntity.status(HttpStatus.NOT_FOUND)
-                            .body(SemonemoResponse(statusCode = 404, message = it.message))
-                    )
-                    else -> Mono.just(
-                        ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(SemonemoResponse(statusCode = 500))
-                    )
-                }
-            }
+            .onErrorResume { generateErrorResponse(it) }
     }
 
     @PutMapping("/api/meetings/{meetingId}/users/{userId}/attendance")
@@ -131,27 +93,25 @@ class MeetingController(
 
         return meetingService.updateAttendance(loginUser, meetingId, userId, request)
             .flatMap { Mono.just(ResponseEntity.ok(SemonemoResponse(data = MeetingResponse.of(it)))) }
-            .onErrorResume {
-                when (it) {
-                    is java.lang.IllegalStateException -> Mono.just(
-                        ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                            SemonemoResponse(statusCode = 400, message = it.message)
-                        )
-                    )
-                    is java.lang.IllegalArgumentException
-                    -> Mono.just(
-                        ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                            SemonemoResponse(statusCode = 404, message = it.message)
-                        )
-                    )
-                    is ForbiddenException -> Mono.just(
-                        ResponseEntity.status(HttpStatus.FORBIDDEN)
-                            .body(SemonemoResponse(statusCode = 403, message = it.message))
-                    )
-                    else -> Mono.just(
-                        ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(SemonemoResponse(statusCode = 500))
-                    )
-                }
-            }
+            .onErrorResume { generateErrorResponse(it) }
     }
+
+    private fun generateErrorResponse(throwable: Throwable) =
+        when (throwable) {
+            is java.lang.IllegalStateException -> Mono.just(
+                ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(SemonemoResponse(statusCode = 400, message = throwable.message))
+            )
+            is java.lang.IllegalArgumentException -> Mono.just(
+                ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(SemonemoResponse(statusCode = 404, message = throwable.message))
+            )
+            is ForbiddenException -> Mono.just(
+                ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(SemonemoResponse(statusCode = 403, message = throwable.message))
+            )
+            else -> Mono.just(
+                ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(SemonemoResponse(statusCode = 500))
+            )
+        }
 }

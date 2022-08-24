@@ -29,11 +29,6 @@ class InvitationController(
 
         return invitationService.saveInvitation(user, request)
             .flatMap { Mono.just(ResponseEntity.ok(SemonemoResponse(data = InvitationSaveResponse.of(it)))) }
-            .onErrorResume {
-                Mono.just(
-                    ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body(SemonemoResponse(statusCode = 400, message = it.message))
-                )
-            }
+            .onErrorResume { Mono.just(ResponseEntity.status(HttpStatus.BAD_REQUEST).body(SemonemoResponse(statusCode = 400, message = it.message))) }
     }
 }
