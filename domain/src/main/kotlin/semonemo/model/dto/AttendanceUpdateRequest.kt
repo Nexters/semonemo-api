@@ -1,5 +1,5 @@
 package semonemo.model.dto
 
 data class AttendanceUpdateRequest(
-    val attend: Boolean
+    val attend: Boolean,
 )

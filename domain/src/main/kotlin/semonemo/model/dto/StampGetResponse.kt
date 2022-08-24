@@ -8,7 +8,7 @@ data class StampGetResponse(
     val id: Long,
     @JsonInclude(JsonInclude.Include.NON_NULL)
     val order: Long?,
-    val meeting: MeetingGetResponse
+    val meeting: MeetingGetResponse,
 ) {
 
     companion object {

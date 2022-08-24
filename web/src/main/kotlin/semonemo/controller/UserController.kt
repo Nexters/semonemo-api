@@ -18,7 +18,7 @@ import semonemo.service.UserService
 
 @RestController
 class UserController(
-    private val userService: UserService
+    private val userService: UserService,
 ) {
 
     @PostMapping("/api/login", consumes = [MediaType.APPLICATION_JSON_VALUE])

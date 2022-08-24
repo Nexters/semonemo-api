@@ -12,7 +12,7 @@ data class MeetingGetResponse(
     val host: UserGetResponse,
     val loginUser: LoginUserInfoResponse,
     val isEnd: Boolean,
-    val participants: List<ParticipantGetResponse>
+    val participants: List<ParticipantGetResponse>,
 //    val createdAt: LocalDateTime?,
 ) {
 

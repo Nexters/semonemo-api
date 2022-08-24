@@ -6,7 +6,7 @@ import org.springframework.web.reactive.result.method.annotation.ArgumentResolve
 
 @Configuration
 class AuthUserConfig(
-    private val loginUserArgumentResolver: LoginUserArgumentResolver
+    private val loginUserArgumentResolver: LoginUserArgumentResolver,
 ) : WebFluxConfigurer {
 
     @Override

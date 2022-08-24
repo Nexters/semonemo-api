@@ -16,7 +16,7 @@ import semonemo.service.StampService
 
 @RestController
 class StampController(
-    private val stampService: StampService
+    private val stampService: StampService,
 ) {
 
     @GetMapping("/api/stamps")

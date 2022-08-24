@@ -7,7 +7,7 @@ import org.springframework.data.mongodb.core.mapping.Document
 class Stamp(
     id: Long,
     invitation: Invitation,
-    confirmed: Boolean = false
+    confirmed: Boolean = false,
 ) : AuditableDocument() {
 
     @Id
