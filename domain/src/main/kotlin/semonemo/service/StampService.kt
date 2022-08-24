@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
-import semonemo.model.entity.Stamp
+import semonemo.model.stamp.Stamp
 import semonemo.model.entity.User
 import semonemo.repository.CountersRepository
 import semonemo.repository.InvitationRepository
@@ -26,7 +26,7 @@ class StampService(
             .flatMap { invitation ->
                 countersRepository.findById("stampId")
                     .flatMap { stampCounter ->
-                        stampCounter.increaseSeq()
+                        stampCounter.increaseSeqOne()
                         invitation.stamped = true
 
                         Mono.zip(
@@ -42,16 +42,16 @@ class StampService(
     }
 
     @Transactional(readOnly = true)
-    fun findStamps(user: User): Flux<Stamp> = stampRepository.findByUser(userId = user.id!!)
+    fun findStamps(user: User): Flux<Stamp> = stampRepository.findByUserId(userId = user.id!!)
         .sort(Comparator.comparingLong { it.id })
 
-    // TODO: 내꺼 아니면 조회 안되어야 함
+    // TODO: 내 스탬프가 아니면 조회 안되어야 함
     @Transactional(readOnly = true)
     fun findStamp(id: Long): Mono<Stamp> = stampRepository.findById(id)
 
     @Transactional
     fun updateNewStamps(user: User): Flux<Stamp> =
-        stampRepository.findByUserAndConfirmed(userId = user.id!!, confirmed = false)
+        stampRepository.findByUserIdAndConfirmed(userId = user.id!!, confirmed = false)
             .flatMap { stamp ->
                 stamp.confirmed = true
                 stampRepository.save(stamp)
@@ -60,6 +60,6 @@ class StampService(
 
     @Transactional(readOnly = true)
     fun findNewStamps(user: User): Flux<Stamp> =
-        stampRepository.findByUserAndConfirmed(userId = user.id!!, confirmed = false)
+        stampRepository.findByUserIdAndConfirmed(userId = user.id!!, confirmed = false)
             .sort(Comparator.comparingLong { it.id })
 }

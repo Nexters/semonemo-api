@@ -1,7 +1,6 @@
-package semonemo.model.dto
+package semonemo.model.meeting
 
 import org.springframework.format.annotation.DateTimeFormat
-import semonemo.model.entity.Meeting
 import semonemo.model.entity.User
 import java.time.LocalDateTime
 

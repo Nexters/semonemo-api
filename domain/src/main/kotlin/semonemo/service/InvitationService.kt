@@ -3,8 +3,8 @@ package semonemo.service
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import reactor.core.publisher.Mono
-import semonemo.model.dto.InvitationSaveRequest
-import semonemo.model.entity.Invitation
+import semonemo.model.invitation.InvitationSaveRequest
+import semonemo.model.invitation.Invitation
 import semonemo.model.entity.User
 import semonemo.repository.CountersRepository
 import semonemo.repository.InvitationRepository
@@ -17,7 +17,6 @@ class InvitationService(
     private val countersRepository: CountersRepository,
 ) {
 
-    // TODO: 리팩토링 필요. 웹플럭스 어려웡
     @Transactional
     fun saveInvitation(guest: User, request: InvitationSaveRequest): Mono<Invitation> =
         meetingRepository.findById(request.meetingId)
@@ -31,7 +30,7 @@ class InvitationService(
                     .flatMap<Invitation?> { Mono.defer { Mono.error(IllegalArgumentException("이미 초대된 모임입니다.")) } }
                     .switchIfEmpty(countersRepository.findById("invitationId")
                         .flatMap { counter ->
-                            counter.increaseSeq()
+                            counter.increaseSeqOne()
 
                             Mono.zip(
                                 countersRepository.save(counter),

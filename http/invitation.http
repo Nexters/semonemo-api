@@ -3,5 +3,5 @@ POST {{host}}/api/invitations
 Content-Type: application/json
 
 {
-  "meetingId": 138
+  "meetingId": 398
 }

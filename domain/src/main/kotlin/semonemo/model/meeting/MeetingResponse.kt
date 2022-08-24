@@ -1,6 +1,4 @@
-package semonemo.model.dto
-
-import semonemo.model.entity.Meeting
+package semonemo.model.meeting
 
 data class MeetingResponse(
     val id: Long,

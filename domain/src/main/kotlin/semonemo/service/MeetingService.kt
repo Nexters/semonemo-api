@@ -4,11 +4,11 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
-import semonemo.model.dto.AttendanceUpdateRequest
-import semonemo.model.dto.MeetingSaveRequest
-import semonemo.model.dto.WantToAttendRequest
-import semonemo.model.entity.Invitation
-import semonemo.model.entity.Meeting
+import semonemo.model.invitation.AttendanceUpdateRequest
+import semonemo.model.meeting.MeetingSaveRequest
+import semonemo.model.invitation.WantToAttendRequest
+import semonemo.model.invitation.Invitation
+import semonemo.model.meeting.Meeting
 import semonemo.model.entity.User
 import semonemo.model.exception.ForbiddenException
 import semonemo.repository.BlacklistRepository
@@ -27,15 +27,14 @@ class MeetingService(
 
     @Transactional
     fun saveMeeting(host: User, request: MeetingSaveRequest): Mono<Meeting> =
-        // TODO: counter 조회할 때 lock 걸어야 함
         Mono.zip(countersRepository.findById("meetingId"), countersRepository.findById("invitationId"))
             .flatMap { tuple ->
                 val meetingCounter = tuple.t1
                 val invitationCounter = tuple.t2
                 val meeting = request.toMeeting(meetingCounter.seq, host)
 
-                meetingCounter.increaseSeq()
-                invitationCounter.increaseSeq()
+                meetingCounter.increaseSeqOne()
+                invitationCounter.increaseSeqOne()
 
                 Mono.zip(
                     countersRepository.save(meetingCounter),
@@ -55,13 +54,14 @@ class MeetingService(
         ).concatMap { mergeWithParticipants(it) }
             .filterWhen { isUserInvited(it, user) }
             .collectList()
-            .flatMap { findMeetingsFilterWithBlacklist(it, user) }
+            .flatMap { findMeetingsFilteredByBlacklist(it, user) }
             .flatMapIterable { it }
 
     // TODO: 초대받지 않은 모임은 조회 권한이 없어야 함
     @Transactional(readOnly = true)
     fun findMeeting(id: Long, user: User): Mono<Meeting> =
         meetingRepository.findById(id)
+            .switchIfEmpty(Mono.defer { Mono.error(IllegalArgumentException("존재하지 않는 모임입니다.")) })
             .flatMap { mergeWithParticipants(it) }
             .filterWhen { isNotBlacklistMeeting(it, user) }
             .switchIfEmpty(Mono.defer { Mono.error(IllegalArgumentException("신고된 모임입니다.")) })
@@ -69,17 +69,17 @@ class MeetingService(
     @Transactional
     fun removeMeeting(user: User, id: Long): Mono<Meeting> = meetingRepository.findById(id)
         .switchIfEmpty(Mono.defer { Mono.error(IllegalArgumentException("존재하지 않는 모임입니다.")) })
-        .flatMap {
-            if (it.hostUserId != user.id) {
+        .flatMap { meeting ->
+            if (meeting.hostUserId != user.id) {
                 return@flatMap Mono.defer { Mono.error(ForbiddenException("권한이 없는 유저입니다. (호스트가 아님)")) }
             }
 
-            if (it.isRemoved) {
+            if (meeting.isRemoved) {
                 return@flatMap Mono.defer { Mono.error(IllegalArgumentException("이미 제거된 모임입니다.")) }
             }
 
-            it.remove()
-            meetingRepository.save(it)
+            meeting.remove()
+            meetingRepository.save(meeting)
         }
 
     @Transactional
@@ -134,18 +134,14 @@ class MeetingService(
         }
 
     private fun mergeWithParticipants(meeting: Meeting): Mono<Meeting> =
-        invitationRepository.findByMeetingIdAndWantToAttend(meeting.id)
+        invitationRepository.findByMeetingIdAndWantToAttend(meeting.id, true)
             .collectList()
             .flatMap { invitations ->
                 val participants = invitations.map {
-                    val user = User(
-                        nickname = it.user.nickname,
-                        group = it.user.group,
-                        profileImageUrl = it.user.profileImageUrl,
-                    )
-                    user.id = it.user.id
-                    user.attended = it.attended
-                    user
+                    val participant = User(nickname = it.user.nickname, group = it.user.group, profileImageUrl = it.user.profileImageUrl)
+                    participant.id = it.user.id
+                    participant.attended = it.attended
+                    participant
                 }.toList()
                 meeting.participants = participants
 
@@ -160,7 +156,7 @@ class MeetingService(
                 Mono.just(invitees.contains(user))
             }
 
-    private fun findMeetingsFilterWithBlacklist(meetings: List<Meeting>, user: User): Mono<List<Meeting>> =
+    private fun findMeetingsFilteredByBlacklist(meetings: List<Meeting>, user: User): Mono<List<Meeting>> =
         blacklistRepository.findByUserId(user.id!!)
             .map { blacklist -> blacklist.meetingId }
             .collectList()

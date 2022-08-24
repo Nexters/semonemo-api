@@ -1,4 +1,4 @@
-package semonemo.model.dto
+package semonemo.model
 
 data class SemonemoResponse(
     val statusCode: Int = 200,

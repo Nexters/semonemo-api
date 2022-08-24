@@ -1,6 +1,5 @@
 package semonemo.controller
 
-import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -10,15 +9,16 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.server.WebSession
 import reactor.core.publisher.Mono
 import semonemo.config.LoginUserArgumentResolver.Companion.LOGIN_ATTRIBUTE_NAME
-import semonemo.model.dto.AuthRequest
-import semonemo.model.dto.SemonemoResponse
-import semonemo.model.dto.UserGetResponse
-import semonemo.model.entity.User
+import semonemo.config.LoginUserArgumentResolver.Companion.findLoginUser
+import semonemo.config.LoginUserArgumentResolver.Companion.unauthorizedResponse
+import semonemo.model.user.AuthRequest
+import semonemo.model.SemonemoResponse
+import semonemo.model.user.UserGetResponse
 import semonemo.service.UserService
 
 @RestController
 class UserController(
-    private val userService: UserService
+    private val userService: UserService,
 ) {
 
     @PostMapping("/api/login", consumes = [MediaType.APPLICATION_JSON_VALUE])
@@ -39,12 +39,7 @@ class UserController(
 
     @GetMapping("/api/my-info")
     fun getMyInfo(session: WebSession): Mono<ResponseEntity<SemonemoResponse>> {
-        val user = session.attributes[LOGIN_ATTRIBUTE_NAME] as User?
-            ?: return Mono.defer {
-                Mono.just(
-                    ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(SemonemoResponse(statusCode = 401, message = "로그인이 필요합니다."))
-                )
-            }
+        val user = findLoginUser(session) ?: return unauthorizedResponse()
 
         return Mono.just(ResponseEntity.ok(SemonemoResponse(data = UserGetResponse.of(user))))
     }

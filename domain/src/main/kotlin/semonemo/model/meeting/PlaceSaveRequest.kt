@@ -1,6 +1,4 @@
-package semonemo.model.dto
-
-import semonemo.model.entity.Place
+package semonemo.model.meeting
 
 data class PlaceSaveRequest(
     val summary: String,

@@ -6,3 +6,6 @@ GET {{host}}/api/stamps/103
 
 ### 새로운 스탬프 조회
 GET {{host}}/api/stamps/new
+
+### 새로운 스탬프 확인 완료
+PUT {{host}}/api/stamps/new
