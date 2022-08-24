@@ -62,6 +62,7 @@ class MeetingService(
     @Transactional(readOnly = true)
     fun findMeeting(id: Long, user: User): Mono<Meeting> =
         meetingRepository.findById(id)
+            .switchIfEmpty(Mono.defer { Mono.error(IllegalArgumentException("존재하지 않는 모임입니다.")) })
             .flatMap { mergeWithParticipants(it) }
             .filterWhen { isNotBlacklistMeeting(it, user) }
             .switchIfEmpty(Mono.defer { Mono.error(IllegalArgumentException("신고된 모임입니다.")) })
