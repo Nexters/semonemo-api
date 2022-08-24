@@ -8,7 +8,7 @@ import semonemo.repository.UserRepository
 
 @Service
 class UserService(
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
 ) {
 
     @Transactional(readOnly = true)

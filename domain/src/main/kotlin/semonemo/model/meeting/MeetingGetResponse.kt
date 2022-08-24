@@ -1,6 +1,7 @@
-package semonemo.model.dto
+package semonemo.model.meeting
 
-import semonemo.model.entity.Meeting
+import semonemo.model.user.LoginUserInfoResponse
+import semonemo.model.user.UserGetResponse
 import semonemo.model.entity.User
 import java.time.LocalDateTime
 
@@ -12,8 +13,7 @@ data class MeetingGetResponse(
     val host: UserGetResponse,
     val loginUser: LoginUserInfoResponse,
     val isEnd: Boolean,
-    val participants: List<ParticipantGetResponse>
-//    val createdAt: LocalDateTime?,
+    val participants: List<ParticipantGetResponse>,
 ) {
 
     companion object {
@@ -44,7 +44,6 @@ data class MeetingGetResponse(
                 ),
                 isEnd = meeting.endDate.isBefore(now),
                 participants = ParticipantGetResponse.listOf(meeting.participants)
-//                createdAt = meeting.createdAt,
             )
         }
     }

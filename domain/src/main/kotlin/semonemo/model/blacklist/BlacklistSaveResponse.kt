@@ -1,6 +1,4 @@
-package semonemo.model.dto
-
-import semonemo.model.entity.Blacklist
+package semonemo.model.blacklist
 
 data class BlacklistSaveResponse(
     val id: Long,

@@ -1,4 +1,4 @@
-package semonemo.model.dto
+package semonemo.model.user
 
 import semonemo.model.entity.User
 

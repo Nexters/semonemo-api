@@ -1,14 +1,14 @@
-package semonemo.model.dto
+package semonemo.model.stamp
 
 import com.fasterxml.jackson.annotation.JsonInclude
-import semonemo.model.entity.Stamp
 import semonemo.model.entity.User
+import semonemo.model.meeting.MeetingGetResponse
 
 data class StampGetResponse(
     val id: Long,
     @JsonInclude(JsonInclude.Include.NON_NULL)
     val order: Long?,
-    val meeting: MeetingGetResponse
+    val meeting: MeetingGetResponse,
 ) {
 
     companion object {

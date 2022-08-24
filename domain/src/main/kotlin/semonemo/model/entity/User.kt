@@ -2,31 +2,28 @@ package semonemo.model.entity
 
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
+import semonemo.model.AuditableDocument
 import java.io.Serializable
 
-@Document
+/**
+ * 패키지 위치 바꾸게되면 deserialize 과정 중 이슈 발생하므로
+ * 패키지 위치 등 클래스 관련 정보 함부로 바꾸면 안됨
+ */
+@Document("user")
 class User(
-    nickname: String,
-    group: String?,
-    profileImageUrl: String? = null,
+    var nickname: String,
+    var group: String?,
+    var profileImageUrl: String? = null,
 ) : AuditableDocument(), Serializable {
 
     @Id
     var id: Long? = null
 
-    var nickname = nickname
-        private set
-
     @Transient
     var authKey: String? = null
         private set
 
-    var group = group
-        private set
-
-    var profileImageUrl = profileImageUrl
-        private set
-
+    @Transient
     var attended: Boolean? = null
 
     companion object {

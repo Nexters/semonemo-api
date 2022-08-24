@@ -3,8 +3,8 @@ package semonemo.service
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import reactor.core.publisher.Mono
-import semonemo.model.dto.BlacklistSaveRequest
-import semonemo.model.entity.Blacklist
+import semonemo.model.blacklist.BlacklistSaveRequest
+import semonemo.model.blacklist.Blacklist
 import semonemo.model.entity.User
 import semonemo.repository.BlacklistRepository
 import semonemo.repository.CountersRepository
@@ -30,7 +30,7 @@ class BlacklistService(
                     .flatMap<Blacklist?> { Mono.defer { Mono.error(IllegalArgumentException("이미 신고된 모임입니다.")) } }
             }.switchIfEmpty(countersRepository.findById("blacklistId")
                 .flatMap { counter ->
-                    counter.increaseSeq()
+                    counter.increaseSeqOne()
 
                     Mono.zip(
                         countersRepository.save(counter),

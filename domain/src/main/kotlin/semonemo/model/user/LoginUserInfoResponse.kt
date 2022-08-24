@@ -1,4 +1,4 @@
-package semonemo.model.dto
+package semonemo.model.user
 
 data class LoginUserInfoResponse(
     val isHost: Boolean = false,
