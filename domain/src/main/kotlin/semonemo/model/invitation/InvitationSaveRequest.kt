@@ -1,4 +1,4 @@
-package semonemo.model.dto
+package semonemo.model.invitation
 
 data class InvitationSaveRequest(
     val meetingId: Long,

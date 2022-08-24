@@ -4,11 +4,11 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
-import semonemo.model.dto.AttendanceUpdateRequest
-import semonemo.model.dto.MeetingSaveRequest
-import semonemo.model.dto.WantToAttendRequest
-import semonemo.model.entity.Invitation
-import semonemo.model.entity.Meeting
+import semonemo.model.invitation.AttendanceUpdateRequest
+import semonemo.model.meeting.MeetingSaveRequest
+import semonemo.model.invitation.WantToAttendRequest
+import semonemo.model.invitation.Invitation
+import semonemo.model.meeting.Meeting
 import semonemo.model.entity.User
 import semonemo.model.exception.ForbiddenException
 import semonemo.repository.BlacklistRepository

@@ -3,8 +3,8 @@ package semonemo.service
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import reactor.core.publisher.Mono
-import semonemo.model.dto.InvitationSaveRequest
-import semonemo.model.entity.Invitation
+import semonemo.model.invitation.InvitationSaveRequest
+import semonemo.model.invitation.Invitation
 import semonemo.model.entity.User
 import semonemo.repository.CountersRepository
 import semonemo.repository.InvitationRepository

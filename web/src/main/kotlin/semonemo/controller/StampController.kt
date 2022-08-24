@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.server.WebSession
 import reactor.core.publisher.Mono
 import semonemo.config.LoginUserArgumentResolver
-import semonemo.model.dto.SemonemoResponse
-import semonemo.model.dto.StampGetResponse
+import semonemo.model.SemonemoResponse
+import semonemo.model.stamp.StampGetResponse
 import semonemo.model.entity.User
 import semonemo.service.StampService
 

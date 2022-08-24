@@ -2,6 +2,7 @@ package semonemo.model.entity
 
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
+import semonemo.model.AuditableDocument
 import java.io.Serializable
 
 /**

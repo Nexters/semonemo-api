@@ -1,6 +1,7 @@
-package semonemo.model.dto
+package semonemo.model.meeting
 
-import semonemo.model.entity.Meeting
+import semonemo.model.user.LoginUserInfoResponse
+import semonemo.model.user.UserGetResponse
 import semonemo.model.entity.User
 import java.time.LocalDateTime
 

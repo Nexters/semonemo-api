@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.server.WebSession
 import reactor.core.publisher.Mono
 import semonemo.config.LoginUserArgumentResolver
-import semonemo.model.dto.BlacklistSaveRequest
-import semonemo.model.dto.BlacklistSaveResponse
-import semonemo.model.dto.SemonemoResponse
+import semonemo.model.blacklist.BlacklistSaveRequest
+import semonemo.model.blacklist.BlacklistSaveResponse
+import semonemo.model.SemonemoResponse
 import semonemo.model.entity.User
 import semonemo.service.BlacklistService
 

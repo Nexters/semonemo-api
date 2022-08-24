@@ -1,9 +1,11 @@
-package semonemo.model.entity
+package semonemo.model.meeting
 
 import org.springframework.data.annotation.Id
 import org.springframework.data.annotation.Transient
 import org.springframework.data.mongodb.core.mapping.Document
 import org.springframework.format.annotation.DateTimeFormat
+import semonemo.model.AuditableDocument
+import semonemo.model.entity.User
 import java.time.LocalDateTime
 
 @Document("meeting")

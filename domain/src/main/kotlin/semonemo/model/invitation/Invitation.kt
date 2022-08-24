@@ -1,7 +1,10 @@
-package semonemo.model.entity
+package semonemo.model.invitation
 
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
+import semonemo.model.AuditableDocument
+import semonemo.model.meeting.Meeting
+import semonemo.model.entity.User
 
 @Document("invitation")
 class Invitation(

@@ -1,4 +1,4 @@
-package semonemo.model.entity
+package semonemo.model.meeting
 
 import org.springframework.data.mongodb.core.mapping.Document
 

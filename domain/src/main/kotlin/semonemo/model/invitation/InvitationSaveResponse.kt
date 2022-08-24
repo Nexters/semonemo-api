@@ -1,6 +1,4 @@
-package semonemo.model.dto
-
-import semonemo.model.entity.Invitation
+package semonemo.model.invitation
 
 data class InvitationSaveResponse(
     val id: Long,

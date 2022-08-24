@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
-import semonemo.model.entity.Stamp
+import semonemo.model.stamp.Stamp
 import semonemo.model.entity.User
 import semonemo.repository.CountersRepository
 import semonemo.repository.InvitationRepository

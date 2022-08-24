@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.server.WebSession
 import reactor.core.publisher.Mono
 import semonemo.config.LoginUserArgumentResolver.Companion.LOGIN_ATTRIBUTE_NAME
-import semonemo.model.dto.AuthRequest
-import semonemo.model.dto.SemonemoResponse
-import semonemo.model.dto.UserGetResponse
+import semonemo.model.user.AuthRequest
+import semonemo.model.SemonemoResponse
+import semonemo.model.user.UserGetResponse
 import semonemo.model.entity.User
 import semonemo.service.UserService
 

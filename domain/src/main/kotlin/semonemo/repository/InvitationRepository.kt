@@ -4,7 +4,7 @@ import org.springframework.data.mongodb.repository.Query
 import org.springframework.data.repository.reactive.ReactiveCrudRepository
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
-import semonemo.model.entity.Invitation
+import semonemo.model.invitation.Invitation
 
 interface InvitationRepository : ReactiveCrudRepository<Invitation, Long> {
 

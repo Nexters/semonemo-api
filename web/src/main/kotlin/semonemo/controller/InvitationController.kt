@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.server.WebSession
 import reactor.core.publisher.Mono
 import semonemo.config.LoginUserArgumentResolver
-import semonemo.model.dto.InvitationSaveRequest
-import semonemo.model.dto.InvitationSaveResponse
-import semonemo.model.dto.SemonemoResponse
+import semonemo.model.invitation.InvitationSaveRequest
+import semonemo.model.invitation.InvitationSaveResponse
+import semonemo.model.SemonemoResponse
 import semonemo.model.entity.User
 import semonemo.service.InvitationService
 
